@@ -1,0 +1,102 @@
+
+
+/* Set the font for the entire application */
+* {
+    font-family: "Noto Sans";
+    font-size: 10pt; /* Adjust the font size as needed */
+}
+
+/* Set the background color for the entire application */
+QMainWindow {
+    background-color: #36393f;
+}
+
+CookieHandler {
+    background-color: #36393f; /* Set your desired background color */
+    border: 2px solid black;
+}
+
+QWidget#centralContainer {
+    background-color: #36393f; /* Set your desired background color */
+}
+
+/* Set the text color for all labels, buttons, line edits, and check boxes */
+QLabel, QPushButton, QLineEdit, QCheckBox, QMenu {
+    color: white;
+}
+
+/* Style the QPushButton */
+QPushButton {
+    background-color: #ED2553;
+    border: 1px solid #ED2553;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: #f15478;
+    border-color: #f15478;
+}
+
+/* Style the QLineEdit and QCheckBox */
+QLineEdit, QCheckBox {
+    background-color: #2C2F33;
+    border: 1px solid #23272A;
+    padding: 4px;
+}
+
+/* Apply to the menu bar */
+QMenuBar {
+    background-color: #36393f;
+    color: white;
+}
+
+/* Apply to menu items */
+QMenuBar::item {
+    background-color: #36393f;
+    color: white;
+    spacing: 3px;
+    padding: 4px 20px;
+}
+
+/* Apply to selected menu items */
+QMenuBar::item:selected {
+    background-color: #ED2553;
+}
+
+/* Apply to submenu items */
+QMenu {
+    background-color: #36393f;
+    border: 1px solid #23272A;
+}
+
+/* Apply to submenu item text */
+QMenu::item {
+    padding: 4px 20px;
+    color: white;
+}
+
+/* Apply to selected submenu items */
+QMenu::item:selected {
+    background-color: #ED2553;
+}
+
+#TitleLabel {
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+#MinimizeButton, #MaximizeRestoreButton, #CloseButton {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 0;
+    color: #ED2553;
+    text-align: center;
+}
+
+#MinimizeButton:hover, #MaximizeRestoreButton:hover, #CloseButton:hover {
+    background-color: #ED2553;
+    color: #333333;
+}
