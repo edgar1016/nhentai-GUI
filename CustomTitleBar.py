@@ -21,7 +21,11 @@ class CustomTitleBar(QWidget):
         self.title_layout = QHBoxLayout()
 
         # Title label with style
-        self.title_label = QLabel('<span style="color: #ed2553;">n</span>Hentai GUI')
+        if isinstance(self.parent, QMainWindow):
+            self.title_label = QLabel('<span style="color: #ed2553;">n</span>Hentai GUI')
+        else:
+            self.title_label = QLabel('Cookies 🍪')
+
         self.title_label.setObjectName("TitleLabel")  # Apply a style object name
 
         # Icon for the title label
