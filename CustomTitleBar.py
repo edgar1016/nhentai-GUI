@@ -92,6 +92,16 @@ class CustomTitleBar(QWidget):
             set_add_preset.triggered.connect(self.add_preset)
             options_menu.addAction(set_add_preset)
 
+            # Add clean language action
+            clean_download_history_action = QAction("Clean Download History", self)
+            clean_download_history_action.triggered.connect(self.clean_download_history)
+            options_menu.addAction(clean_download_history_action)
+
+            # Add clean language action
+            clean_language_action = QAction("Clean Language", self)
+            clean_language_action.triggered.connect(self.clean_language)
+            options_menu.addAction(clean_language_action)
+
             # Add action for setting cookie
             set_cookie_action = QAction("Set Cookie", self)
             set_cookie_action.triggered.connect(self.set_cookie)
@@ -101,6 +111,11 @@ class CustomTitleBar(QWidget):
             set_default_dir_action = QAction("Set Default Directory", self)
             set_default_dir_action.triggered.connect(self.set_default_directory)
             options_menu.addAction(set_default_dir_action)
+
+            # Add an action for setting default directory
+            set_language_action = QAction("Set Language", self)
+            set_language_action.triggered.connect(self.set_language)
+            options_menu.addAction(set_language_action)
 
             # Add action for opening default directory
             open_default_directory_action = QAction("Open Default Directory", self)
@@ -155,20 +170,20 @@ class CustomTitleBar(QWidget):
     def open_default_directory(self):
         self.main_window.open_default_directory()
 
-    def favoritesPreset(self):
-        self.main_window.favoritesPreset()
-
-    def sameSeriesPreset(self):
-        self.main_window.sameSeriesPreset()
-
-    def multiplePreset(self):
-        self.main_window.multiplePreset()
-
     def minimize_window(self):
         self.parent.showMinimized()
     
     def close_window(self):
         self.parent.close()
+
+    def set_language(self):
+        self.main_window.set_language()
+
+    def clean_language(self):
+        self.main_window.clean_language()
+
+    def clean_download_history(self):
+        self.main_window.clean_download_history()
     
     # Implement mouse event handlers to enable window dragging
     def mousePressEvent(self, event: QMouseEvent):

@@ -6,7 +6,7 @@ import os
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QLabel,
     QPushButton, QLineEdit, QCheckBox, QInputDialog,
-    QFileDialog, QFrame, QHBoxLayout
+    QFileDialog, QFrame, QHBoxLayout, QMessageBox
 )
 from PyQt6.QtCore import QSettings, QFile, Qt
 
@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         # Chech Boxes
         self.rm_origin_dir_checkbox = QCheckBox("Remove Original Directory")
         self.rm_origin_dir_checkbox.setObjectName("rm_origin_dir_checkbox")
-        self.rm_origin_dir_checkbox.setMaximumWidth(200)
+        self.rm_origin_dir_checkbox.setMinimumWidth(200)
 
         self.save_history_checkbox = QCheckBox("Save Download History")
         self.save_history_checkbox.setObjectName("save_history_checkbox")
@@ -93,19 +93,23 @@ class MainWindow(QMainWindow):
 
         self.html_checkbox = QCheckBox("HTML")
         self.html_checkbox.setObjectName("html_checkbox")
-        self.html_checkbox.setMinimumWidth(130)
+        self.html_checkbox.setMaximumWidth(90)
 
         self.no_html_checkbox = QCheckBox("No HTML")
         self.no_html_checkbox.setObjectName("no_html_checkbox")
-        self.no_html_checkbox.setMinimumWidth(130)
+        self.no_html_checkbox.setMaximumWidth(105)
 
         self.gen_main_checkbox = QCheckBox("Gen. Main")
         self.gen_main_checkbox.setObjectName("gen_main_checkbox")
-        self.gen_main_checkbox.setMinimumWidth(130)
+        self.gen_main_checkbox.setMaximumWidth(110)
 
         self.meta_checkbox = QCheckBox("META")
         self.meta_checkbox.setObjectName("meta_checkbox")
-        self.meta_checkbox.setMinimumWidth(130)
+        self.meta_checkbox.setMaximumWidth(70)
+
+        self.regen_cbz_checkbox = QCheckBox("Regen CBZ")
+        self.regen_cbz_checkbox.setObjectName("regen_cbz_checkbox")
+        self.regen_cbz_checkbox.setMaximumWidth(135)
 
         # QLabels
         self.page_input_label = QLabel("Page Range \n(e.g. 1-6, 0 = all):")
@@ -137,7 +141,7 @@ class MainWindow(QMainWindow):
         first_row_layout.addWidget(self.rm_origin_dir_checkbox)
         first_row_layout.addSpacing(5)
         first_row_layout.addWidget(self.page_input_label)
-        first_row_layout.addSpacing(10)
+        first_row_layout.addSpacing(5)
         first_row_layout.addWidget(self.delay_input_label)
         first_row_layout.addWidget(self.pdf_checkbox)
         layout.addLayout(first_row_layout)
@@ -162,13 +166,13 @@ class MainWindow(QMainWindow):
         third_row_layout.addStretch(1)
         layout.addLayout(third_row_layout)
 
-        # TODO fourth row with more options
-        # TODO think about better places to put settings 
+        # Create QHBoxLayout for the fourth row of input elements and checkboxes
         fourth_row_layout = QHBoxLayout()
         fourth_row_layout.addWidget(self.html_checkbox)
         fourth_row_layout.addWidget(self.no_html_checkbox)
         fourth_row_layout.addWidget(self.gen_main_checkbox)
         fourth_row_layout.addWidget(self.meta_checkbox)
+        fourth_row_layout.addWidget(self.regen_cbz_checkbox)
         layout.addLayout(fourth_row_layout)
 
 
@@ -202,7 +206,7 @@ class MainWindow(QMainWindow):
             self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
             self.pdf_checkbox, self.dry_run_checkbox, self.html_checkbox, self.no_html_checkbox,
-            self.gen_main_checkbox, self.meta_checkbox
+            self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox
         ]
         for checkbox in checkboxes:
             checkbox.setChecked(self.settings.value(checkbox.objectName(), False, type=bool))
@@ -224,7 +228,7 @@ class MainWindow(QMainWindow):
             self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
             self.pdf_checkbox, self.dry_run_checkbox, self.html_checkbox, self.no_html_checkbox,
-            self.gen_main_checkbox, self.meta_checkbox
+            self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox
         ]
         for checkbox in checkboxes:
             self.settings.setValue(checkbox.objectName(), checkbox.isChecked())
@@ -260,6 +264,8 @@ class MainWindow(QMainWindow):
             commands += " --gen-main"
         if self.meta_checkbox.isChecked():
             commands += " --meta"     
+        if self.regen_cbz_checkbox.isChecked():
+            commands += " --regenerate-cbz" 
         if self.page_input.text():
             if self.page_input.text() == "0":
                 commands += f" --page-all"
@@ -284,6 +290,12 @@ class MainWindow(QMainWindow):
         print(commands)
 
         # Open the terminal externally and run the commands
+        subprocess.Popen(commands, shell=True)
+
+    def run_specific_command(self, command):
+        # Open the terminal externally and run the commands
+        commands = (f"nhentai {command}")
+        print(commands)
         subprocess.Popen(commands, shell=True)
         
     def add_preset(self):
@@ -323,6 +335,35 @@ class MainWindow(QMainWindow):
             self.cookieHandler = CookieHandler(self, self.settings)  # Pass MainWindow instance to CookieHandler
         self.cookieHandler.show()
 
+    def set_language(self):
+        language, ok = QInputDialog.getText(self, 'Set Language', 'Enter Language:')
+        if ok:
+            command = (f" --language={language}")
+            self.run_specific_command(command)
+            print(f"The language {language} has been set!")
+        else:
+            return
+
+    def clean_language(self):
+        confirm = QMessageBox.question(self, "Confirmation", "Are you sure you want to do this?",
+                                       QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, 
+                                       QMessageBox.StandardButton.No)
+        if confirm == QMessageBox.StandardButton.Yes:
+            self.run_specific_command(" --clean-language")
+        else:
+            print("User canceled.")
+            return
+        
+    def clean_download_history(self):
+        confirm = QMessageBox.question(self, "Confirmation", "Are you sure you want to do this?\nThis cannot be undone: Delete All Download History",
+                                       QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, 
+                                       QMessageBox.StandardButton.No)
+        if confirm == QMessageBox.StandardButton.Yes:
+            self.run_specific_command(" --clean-download-history")
+        else:
+            print("User canceled.")
+            return
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
