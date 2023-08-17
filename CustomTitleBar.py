@@ -62,13 +62,13 @@ class CustomTitleBar(QWidget):
         self.minimize_button.clicked.connect(self.minimize_window)
         self.title_layout.addWidget(self.minimize_button)
 
-        # Maximize/Restore button with style
-        self.maximize_restore_button = QPushButton("□")
-        self.maximize_restore_button.setObjectName("MaximizeRestoreButton")  # Apply a style object name
-        self.maximize_restore_button.setFixedHeight(30)
-        self.maximize_restore_button.setFixedWidth(30)
-        self.maximize_restore_button.clicked.connect(self.toggle_maximize_restore)
-        self.title_layout.addWidget(self.maximize_restore_button)
+        # # Maximize/Restore button with style !Reszing is disabled!
+        # self.maximize_restore_button = QPushButton("□")
+        # self.maximize_restore_button.setObjectName("MaximizeRestoreButton")  # Apply a style object name
+        # self.maximize_restore_button.setFixedHeight(30)
+        # self.maximize_restore_button.setFixedWidth(30)
+        # self.maximize_restore_button.clicked.connect(self.toggle_maximize_restore)
+        # self.title_layout.addWidget(self.maximize_restore_button)
 
         # Close button with style
         self.close_button = QPushButton("✕")
@@ -163,6 +163,12 @@ class CustomTitleBar(QWidget):
 
     def multiplePreset(self):
         self.main_window.multiplePreset()
+
+    def minimize_window(self):
+        self.parent.showMinimized()
+    
+    def close_window(self):
+        self.parent.close()
     
     # Implement mouse event handlers to enable window dragging
     def mousePressEvent(self, event: QMouseEvent):
@@ -177,9 +183,3 @@ class CustomTitleBar(QWidget):
             self.parent.move(new_pos)
             self.drag_start_position = event.globalPosition().toPoint()  # Update the drag start position
             event.accept()
-
-    def minimize_window(self):
-        self.parent.showMinimized()
-    
-    def close_window(self):
-        self.parent.close()
