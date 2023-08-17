@@ -56,42 +56,55 @@ class MainWindow(QMainWindow):
         # Elements for nhentai commands
         self.ids_input_label = QLabel("IDs (e.g., 302294 317039):")
         self.ids_input = QLineEdit("302294 317039")
+        self.ids_input.setObjectName("ids_input")
 
         # Chech Boxes
         self.rm_origin_dir_checkbox = QCheckBox("Remove Original Directory")
+        self.rm_origin_dir_checkbox.setObjectName("rm_origin_dir_checkbox")
         self.rm_origin_dir_checkbox.setMaximumWidth(200)
 
         self.save_history_checkbox = QCheckBox("Save Download History")
+        self.save_history_checkbox.setObjectName("save_history_checkbox")
         self.save_history_checkbox.setMinimumWidth(200)
 
         self.favorites_checkbox = QCheckBox("Download Favorites")
+        self.favorites_checkbox.setObjectName("favorites_checkbox")
         self.favorites_checkbox.setMinimumWidth(200)
 
         self.download_checkbox = QCheckBox("Download")
+        self.download_checkbox.setObjectName("download_checkbox")
         self.download_checkbox.setMinimumWidth(110)
 
         self.move_to_folder_checkbox = QCheckBox("Move to Folder")
+        self.move_to_folder_checkbox.setObjectName("move_to_folder_checkbox")
         self.move_to_folder_checkbox.setMinimumWidth(130)
 
         self.cbz_checkbox = QCheckBox("CBZ")
+        self.cbz_checkbox.setObjectName("cbz_checkbox")
         self.cbz_checkbox.setMinimumWidth(70)
 
         self.pdf_checkbox = QCheckBox("PDF")
+        self.pdf_checkbox.setObjectName("pdf_checkbox")
         self.pdf_checkbox.setMinimumWidth(80)
 
         self.dry_run_checkbox = QCheckBox("Dry Run")
+        self.dry_run_checkbox.setObjectName("dry_run_checkbox")
         self.dry_run_checkbox.setMinimumWidth(130)
 
         self.html_checkbox = QCheckBox("HTML")
+        self.html_checkbox.setObjectName("html_checkbox")
         self.html_checkbox.setMinimumWidth(130)
 
         self.no_html_checkbox = QCheckBox("No HTML")
+        self.no_html_checkbox.setObjectName("no_html_checkbox")
         self.no_html_checkbox.setMinimumWidth(130)
 
         self.gen_main_checkbox = QCheckBox("Gen. Main")
+        self.gen_main_checkbox.setObjectName("gen_main_checkbox")
         self.gen_main_checkbox.setMinimumWidth(130)
 
         self.meta_checkbox = QCheckBox("META")
+        self.meta_checkbox.setObjectName("meta_checkbox")
         self.meta_checkbox.setMinimumWidth(130)
 
         # QLabels
@@ -100,16 +113,20 @@ class MainWindow(QMainWindow):
 
         self.delay_input_label = QLabel("Delay \n(seconds):")
         self.delay_input_label.setMaximumWidth(70)
-       
+
         # QLineEdits
         self.page_input = QLineEdit("1-6")
+        self.page_input.setObjectName("page_input")
         self.page_input.setMaximumWidth(50)
 
         self.delay_input = QLineEdit("1")
+        self.delay_input.setObjectName("delay_input")
         self.delay_input.setMaximumWidth(50)
 
         self.format_input = QLineEdit('[%ag] - %p (%i)')
+        self.format_input.setObjectName("format_input")
         self.output_input = QLineEdit("")
+        self.output_input.setObjectName("output_input")
 
         # Add widgets to layout
         layout.addWidget(self.ids_input_label)
@@ -176,53 +193,48 @@ class MainWindow(QMainWindow):
         self.move(qr.topLeft())
 
     def closeEvent(self, event):
-        # Save the current state of elements to the QSettings
-        self.settings.setValue("ids_input", self.ids_input.text())
-        self.settings.setValue("page_input", self.page_input.text())
-        self.settings.setValue("delay_input", self.delay_input.text())
-        self.settings.setValue("format_input", self.format_input.text())
-        self.settings.setValue("output_input", self.output_input.text())
-
-        if not (self.settings.contains("default_doujins_folder")):
-            self.settings.setValue("default_doujins_folder", "C:/Doujins/")
-
-        # Save checkbox states
-        self.settings.setValue("rm_origin_dir_checkbox", self.rm_origin_dir_checkbox.isChecked())
-        self.settings.setValue("save_history_checkbox", self.save_history_checkbox.isChecked())
-        self.settings.setValue("favorites_checkbox", self.favorites_checkbox.isChecked())
-        self.settings.setValue("download_checkbox", self.download_checkbox.isChecked())
-        self.settings.setValue("cbz_checkbox", self.cbz_checkbox.isChecked())
-        self.settings.setValue("move_to_folder_checkbox", self.move_to_folder_checkbox.isChecked())
-        self.settings.setValue("pdf_checkbox", self.pdf_checkbox.isChecked())
-        self.settings.setValue("dry_run_checkbox", self.dry_run_checkbox.isChecked())
-        self.settings.setValue("html_checkbox", self.html_checkbox.isChecked())
-        self.settings.setValue("no_html_checkbox", self.no_html_checkbox.isChecked())
-        self.settings.setValue("gen_main_checkbox", self.gen_main_checkbox.isChecked())
-        self.settings.setValue("meta_checkbox", self.meta_checkbox.isChecked())
-
+        self.save_ui_states()
         event.accept()
 
     def load_ui_states(self):
         # Load checkbox states
-        self.rm_origin_dir_checkbox.setChecked(self.settings.value("rm_origin_dir_checkbox", False, type=bool))
-        self.save_history_checkbox.setChecked(self.settings.value("save_history_checkbox", False, type=bool))
-        self.favorites_checkbox.setChecked(self.settings.value("favorites_checkbox", False, type=bool))
-        self.download_checkbox.setChecked(self.settings.value("download_checkbox", False, type=bool))
-        self.cbz_checkbox.setChecked(self.settings.value("cbz_checkbox", False, type=bool))
-        self.move_to_folder_checkbox.setChecked(self.settings.value("move_to_folder_checkbox", False, type=bool))
-        self.pdf_checkbox.setChecked(self.settings.value("pdf_checkbox", False, type=bool))
-        self.dry_run_checkbox.setChecked(self.settings.value("dry_run_checkbox", False, type=bool))
-        self.html_checkbox.setChecked(self.settings.value("html_checkbox", False, type=bool))
-        self.no_html_checkbox.setChecked(self.settings.value("no_html_checkbox", False, type=bool))
-        self.gen_main_checkbox.setChecked(self.settings.value("gen_main_checkbox", False, type=bool))
-        self.meta_checkbox.setChecked(self.settings.value("meta_checkbox", False, type=bool))
+        checkboxes = [
+            self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
+            self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
+            self.pdf_checkbox, self.dry_run_checkbox, self.html_checkbox, self.no_html_checkbox,
+            self.gen_main_checkbox, self.meta_checkbox
+        ]
+        for checkbox in checkboxes:
+            checkbox.setChecked(self.settings.value(checkbox.objectName(), False, type=bool))
 
         # Load QLineEdit states
-        self.ids_input.setText(self.settings.value("ids_input", "302294 317039", type=str))
-        self.page_input.setText(self.settings.value("page_input", "1-6", type=str))
-        self.delay_input.setText(self.settings.value("delay_input", "1", type=str))
-        self.format_input.setText(self.settings.value("format_input", "[%ag] - %p (%i)", type=str))
-        self.output_input.setText(self.settings.value("output_input", "", type=str))
+        line_edits = [
+            (self.ids_input, "302294 317039"),
+            (self.page_input, "1-6"),
+            (self.delay_input, "1"),
+            (self.format_input, "[%ag] - %p (%i)"),
+            (self.output_input, "")
+        ]
+        for line_edit, default_value in line_edits:
+            line_edit.setText(self.settings.value(line_edit.objectName(), default_value, type=str))
+
+    def save_ui_states(self):
+        # Save checkbox states
+        checkboxes = [
+            self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
+            self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
+            self.pdf_checkbox, self.dry_run_checkbox, self.html_checkbox, self.no_html_checkbox,
+            self.gen_main_checkbox, self.meta_checkbox
+        ]
+        for checkbox in checkboxes:
+            self.settings.setValue(checkbox.objectName(), checkbox.isChecked())
+
+        # Save QLineEdit states
+        line_edits = [
+            self.ids_input, self.page_input, self.delay_input, self.format_input, self.output_input
+        ]
+        for line_edit in line_edits:
+            self.settings.setValue(line_edit.objectName(), line_edit.text())
 
     def run_commands(self):
         # Assemble the nhentai command based on user inputs
@@ -284,22 +296,7 @@ class MainWindow(QMainWindow):
         cleaned_preset_name = preset_name.replace(" ", "-")
         self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
 
-        self.settings.setValue("rm_origin_dir_checkbox", self.rm_origin_dir_checkbox.isChecked())
-        self.settings.setValue("save_history_checkbox", self.save_history_checkbox.isChecked())
-        self.settings.setValue("favorites_checkbox", self.favorites_checkbox.isChecked())
-        self.settings.setValue("download_checkbox", self.download_checkbox.isChecked())
-        self.settings.setValue("cbz_checkbox", self.cbz_checkbox.isChecked())
-        self.settings.setValue("move_to_folder_checkbox", self.move_to_folder_checkbox.isChecked())
-        self.settings.setValue("pdf_checkbox", self.pdf_checkbox.isChecked())
-        self.settings.setValue("dry_run_checkbox", self.dry_run_checkbox.isChecked())
-        self.settings.setValue("html_checkbox", self.html_checkbox.isChecked())
-        self.settings.setValue("no_html_checkbox", self.no_html_checkbox.isChecked())
-        self.settings.setValue("gen_main_checkbox", self.gen_main_checkbox.isChecked())
-        self.settings.setValue("meta_checkbox", self.meta_checkbox.isChecked())
-
-        self.settings.setValue("page_input", self.page_input.text())
-        self.settings.setValue("delay_input", self.delay_input.text())
-        self.settings.setValue("format_input", self.format_input.text())
+        self.save_ui_states()
 
         self.settings.endGroup()
 
@@ -307,22 +304,7 @@ class MainWindow(QMainWindow):
         cleaned_preset_name = preset_name.replace(" ", "-")
         self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
 
-        self.rm_origin_dir_checkbox.setChecked(self.settings.value("rm_origin_dir_checkbox", False, type=bool))
-        self.save_history_checkbox.setChecked(self.settings.value("save_history_checkbox", False, type=bool))
-        self.favorites_checkbox.setChecked(self.settings.value("favorites_checkbox", False, type=bool))
-        self.download_checkbox.setChecked(self.settings.value("download_checkbox", False, type=bool))
-        self.cbz_checkbox.setChecked(self.settings.value("cbz_checkbox", False, type=bool))
-        self.move_to_folder_checkbox.setChecked(self.settings.value("move_to_folder_checkbox", False, type=bool))
-        self.pdf_checkbox.setChecked(self.settings.value("pdf_checkbox", False, type=bool))
-        self.dry_run_checkbox.setChecked(self.settings.value("dry_run_checkbox", False, type=bool))
-        self.html_checkbox.setChecked(self.settings.value("html_checkbox", False, type=bool))
-        self.no_html_checkbox.setChecked(self.settings.value("no_html_checkbox", False, type=bool))
-        self.gen_main_checkbox.setChecked(self.settings.value("gen_main_checkbox", False, type=bool))
-        self.meta_checkbox.setChecked(self.settings.value("meta_checkbox", False, type=bool))
-
-        self.page_input.setText(self.settings.value("page_input", "1-6", type=str))
-        self.delay_input.setText(self.settings.value("delay_input", "1", type=str))
-        self.format_input.setText(self.settings.value("format_input", "[%ag] - %p (%i)", type=str))
+        self.load_ui_states()
 
         self.settings.endGroup()
 
