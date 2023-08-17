@@ -1,3 +1,4 @@
+from functools import partial
 import os
 
 from PyQt6.QtWidgets import (
@@ -9,10 +10,11 @@ from PyQt6.QtGui import QAction, QMouseEvent, QPixmap
 from PyQt6.QtCore import Qt, QSize
 
 class CustomTitleBar(QWidget):
-    def __init__(self, main_window):
+    def __init__(self, main_window, settings):
         super().__init__()
         self.parent = main_window
         self.main_window = main_window
+        self.settings = settings
 
         self.layout = QVBoxLayout()  # Use QHBoxLayout for horizontal layout
 
@@ -81,6 +83,11 @@ class CustomTitleBar(QWidget):
             options_menu = QMenu("Options", self)
             file_menu.addMenu(options_menu)
 
+            # Add action for add preset
+            set_add_preset = QAction("Add Preset", self)
+            set_add_preset.triggered.connect(self.add_preset)
+            options_menu.addAction(set_add_preset)
+
             # Add action for setting cookie
             set_cookie_action = QAction("Set Cookie", self)
             set_cookie_action.triggered.connect(self.set_cookie)
@@ -97,22 +104,10 @@ class CustomTitleBar(QWidget):
             file_menu.addAction(open_default_directory_action)
 
             # Adds presets to the menu bar
-            preset_menu = menubar.addMenu("Presets")
+            self.preset_menu = menubar.addMenu("Presets")
 
-            # Favorites Preset
-            favoritesPresetMenu = QAction("Favorites Preset", self)
-            favoritesPresetMenu.triggered.connect(self.favoritesPreset)
-            preset_menu.addAction(favoritesPresetMenu)
-
-            # Same Series Preset
-            sameSeriesPresetMenu = QAction("Same Series Preset",self)
-            sameSeriesPresetMenu.triggered.connect(self.sameSeriesPreset)
-            preset_menu.addAction(sameSeriesPresetMenu)
-
-            # Multiple Preset
-            multiplePresetMenu = QAction("Multiple Preset",self)
-            multiplePresetMenu.triggered.connect(self.multiplePreset)
-            preset_menu.addAction(multiplePresetMenu)
+            # Get preset names from settings
+            self.populate_prest_menu()
 
             self.menuLayout = QHBoxLayout()
             self.menuLayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -121,6 +116,25 @@ class CustomTitleBar(QWidget):
             self.layout.addLayout(self.menuLayout)
     
         self.setLayout(self.layout)
+
+    def add_preset(self):
+        self.main_window.add_preset()
+        self.populate_prest_menu()
+
+    def load_preset(self, preset_name):
+        self.main_window.load_preset(preset_name)
+
+    def populate_prest_menu(self):
+        self.preset_menu.clear()
+
+        preset_names = self.settings.childGroups()
+        sorted_preset_names = sorted(preset_names, key=lambda x: x.lower())
+
+        for preset_name in sorted_preset_names:
+            cleaned_preset_name = preset_name.replace("Preset_", "").replace("-", " ")
+            preset_menu_item = QAction(cleaned_preset_name, self)
+            preset_menu_item.triggered.connect(partial(self.load_preset, cleaned_preset_name))
+            self.preset_menu.addAction(preset_menu_item)
 
     def toggle_maximize_restore(self):
         if self.parent().isMaximized():

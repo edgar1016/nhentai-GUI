@@ -11,19 +11,21 @@ from CustomTitleBar import CustomTitleBar
 
 class CookieHandler(QWidget):
 
-    def __init__(self, main_window):
+    def __init__(self, main_window, settings):
         super().__init__()
-        self.initUI()
         self.main_window = main_window
+        self.settings = settings
         
         self.cookie_command = "nhentai"
         self.user_agent_command = "nhentai"
 
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.MSWindowsFixedSizeDialogHint | Qt.WindowType.FramelessWindowHint)
 
+        self.initUI()
+
     def initUI(self):
         # Create a custom title bar
-        custom_title_bar = CustomTitleBar(self)
+        custom_title_bar = CustomTitleBar(self, self.settings)
 
         style_file = QFile("styles.qss")
         if style_file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):

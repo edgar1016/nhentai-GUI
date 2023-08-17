@@ -5,7 +5,7 @@ import os
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QLabel,
-    QPushButton, QLineEdit, QCheckBox, QWidget,
+    QPushButton, QLineEdit, QCheckBox, QInputDialog,
     QFileDialog, QFrame, QHBoxLayout
 )
 from PyQt6.QtCore import QSettings, QFile, Qt
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         # Create the custom title bar and add it to the layout
-        custom_title_bar = CustomTitleBar(self)
+        custom_title_bar = CustomTitleBar(self, self.settings)
 
         self.setWindowTitle("nHentai GUI")
         self.setGeometry(100, 100, 510, 300)
@@ -63,19 +63,28 @@ class MainWindow(QMainWindow):
         self.save_history_checkbox.setMinimumWidth(200)
         self.favorites_checkbox = QCheckBox("Download Favorites")
         self.favorites_checkbox.setMinimumWidth(200)
-        self.page_input_label = QLabel("Page Range \n(e.g. 1-6, 0 = all):")
-        self.page_input_label.setMaximumWidth(100)
-        self.page_input = QLineEdit(self.settings.value("page_input", "1-6"))
-        self.page_input.setMaximumWidth(50)
         self.download_checkbox = QCheckBox("Download")
         self.download_checkbox.setMinimumWidth(110)
-        self.delay_input_label = QLabel("Delay \n(seconds):")
-        self.delay_input = QLineEdit(self.settings.value("delay_input", "1"))
-        self.delay_input.setMaximumWidth(50)
-        self.cbz_checkbox = QCheckBox("CBZ")
-        self.cbz_checkbox.setMinimumWidth(70)
         self.move_to_folder_checkbox = QCheckBox("Move to Folder")
         self.move_to_folder_checkbox.setMinimumWidth(130)
+        self.cbz_checkbox = QCheckBox("CBZ")
+        self.cbz_checkbox.setMinimumWidth(70)
+        self.pdf_checkbox = QCheckBox("PDF")
+        self.pdf_checkbox.setMinimumWidth(80)
+        self.dry_run_checkbox = QCheckBox("Dry Run")
+        self.dry_run_checkbox.setMinimumWidth(130)
+
+
+        self.page_input_label = QLabel("Page Range \n(e.g. 1-6, 0 = all):")
+        self.page_input_label.setMaximumWidth(100)
+        self.delay_input_label = QLabel("Delay \n(seconds):")
+        self.delay_input_label.setMaximumWidth(70)
+       
+        # Load QLineEdit states
+        self.page_input = QLineEdit(self.settings.value("page_input", "1-6"))
+        self.page_input.setMaximumWidth(50)
+        self.delay_input = QLineEdit(self.settings.value("delay_input", "1"))
+        self.delay_input.setMaximumWidth(50)
 
         self.format_input = QLineEdit(self.settings.value("format_input", '[%ag] - %p (%i)'))
         self.output_input = QLineEdit(self.settings.value("output_input", ""))
@@ -87,6 +96,8 @@ class MainWindow(QMainWindow):
         self.download_checkbox.setChecked(self.settings.value("download_checkbox", False, type=bool))
         self.cbz_checkbox.setChecked(self.settings.value("cbz_checkbox", False, type=bool))
         self.move_to_folder_checkbox.setChecked(self.settings.value("move_to_folder_checkbox", False, type=bool))
+        self.pdf_checkbox.setChecked(self.settings.value("pdf_checkbox", False, type=bool))
+        self.dry_run_checkbox.setChecked(self.settings.value("dry_run_checkbox", False, type=bool))
 
         # Add widgets to layout
         layout.addWidget(self.ids_input_label)
@@ -95,9 +106,11 @@ class MainWindow(QMainWindow):
         # Create QHBoxLayout for the first row of input elements and checkboxes
         first_row_layout = QHBoxLayout()
         first_row_layout.addWidget(self.rm_origin_dir_checkbox)
+        first_row_layout.addSpacing(5)
         first_row_layout.addWidget(self.page_input_label)
         first_row_layout.addSpacing(10)
         first_row_layout.addWidget(self.delay_input_label)
+        first_row_layout.addWidget(self.pdf_checkbox)
         layout.addLayout(first_row_layout)
 
         # Create QHBoxLayout for the second row of input elements and checkboxes
@@ -106,7 +119,8 @@ class MainWindow(QMainWindow):
         second_row_layout.addWidget(self.page_input)
         second_row_layout.addSpacing(60)
         second_row_layout.addWidget(self.delay_input)
-        
+        second_row_layout.addSpacing(20)
+        second_row_layout.addWidget(self.dry_run_checkbox)
         second_row_layout.addStretch(1)
         layout.addLayout(second_row_layout)
 
@@ -119,13 +133,15 @@ class MainWindow(QMainWindow):
         third_row_layout.addStretch(1)
         layout.addLayout(third_row_layout)
 
+        # TODO fourth row with more options
+        # TODO think about better places to put settings 
+        fourth_row_layout = QHBoxLayout()
+
         layout.addWidget(QLabel("Format:"))
         layout.addWidget(self.format_input)
         layout.addWidget(QLabel("Output Folder:"))
         layout.addWidget(self.output_input)
         layout.addWidget(self.run_button)
-
-        # Options #
 
         style_file = QFile("styles.qss")
         if style_file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):
@@ -157,6 +173,8 @@ class MainWindow(QMainWindow):
         self.settings.setValue("download_checkbox", self.download_checkbox.isChecked())
         self.settings.setValue("cbz_checkbox", self.cbz_checkbox.isChecked())
         self.settings.setValue("move_to_folder_checkbox", self.move_to_folder_checkbox.isChecked())
+        self.settings.setValue("pdf_checkbox", self.pdf_checkbox.isChecked())
+        self.settings.setValue("dry_run_checkbox", self.dry_run_checkbox.isChecked())
 
         event.accept()
 
@@ -172,6 +190,10 @@ class MainWindow(QMainWindow):
             commands += " --save-download-history"
         if self.favorites_checkbox.isChecked():
             commands += " --favorites"
+        if self.pdf_checkbox.isChecked():
+            commands += " --pdf"  
+        if self.dry_run_checkbox.isChecked():
+            commands += " --dry-run"        
         if self.page_input.text():
             if self.page_input.text() == "0":
                 commands += f" --page-all"
@@ -189,7 +211,7 @@ class MainWindow(QMainWindow):
             commands += f' --format "{self.format_input.text()}"'
         if self.output_input.text():
             cleaned_output_text = re.sub(r'[\\/*?:"<>|]',"-",self.output_input.text())
-            commands += f' --output "{self.settings.value("default_doujins_folder", "C:/Doujins")}/"{cleaned_output_text}/"'
+            commands += f' --output "{self.settings.value("default_doujins_folder", "C:/Doujins")}/{cleaned_output_text}/"'
         else:
             commands += f' --output "{self.settings.value("default_doujins_folder", "C:/Doujins")}"'
 
@@ -197,47 +219,50 @@ class MainWindow(QMainWindow):
 
         # Open the terminal externally and run the commands
         subprocess.Popen(commands, shell=True)
+        
+    def add_preset(self):
+        preset_name, ok = QInputDialog.getText(self, 'New Preset', 'Enter your preset name:')
+        if ok:
+            print(f"The preset {preset_name} was added!")
+        else:
+            return
+        
+        cleaned_preset_name = preset_name.replace(" ", "-")
+        self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
 
-    def favoritesPreset(self):
-        # Apply favoritesPreset settings
-        self.ids_input.setText("")
-        self.rm_origin_dir_checkbox.setChecked(False)
-        self.save_history_checkbox.setChecked(True)
-        self.favorites_checkbox.setChecked(True)
-        self.page_input.setText("1-6")
-        self.download_checkbox.setChecked(True)
-        self.delay_input.setText("1")
-        self.cbz_checkbox.setChecked(True)
-        self.move_to_folder_checkbox.setChecked(True)
-        self.format_input.setText('[%ag] - %p (%i)')
-        self.output_input.setText('')
+        self.settings.setValue("rm_origin_dir_checkbox", self.rm_origin_dir_checkbox.isChecked())
+        self.settings.setValue("save_history_checkbox", self.save_history_checkbox.isChecked())
+        self.settings.setValue("favorites_checkbox", self.favorites_checkbox.isChecked())
+        self.settings.setValue("download_checkbox", self.download_checkbox.isChecked())
+        self.settings.setValue("cbz_checkbox", self.cbz_checkbox.isChecked())
+        self.settings.setValue("move_to_folder_checkbox", self.move_to_folder_checkbox.isChecked())
+        self.settings.setValue("pdf_checkbox", self.pdf_checkbox.isChecked())
+        self.settings.setValue("dry_run_checkbox", self.dry_run_checkbox.isChecked())
 
-    def sameSeriesPreset(self):
-        # Apply Same Series Preset settings
-        # self.ids_input.setText("")
-        self.rm_origin_dir_checkbox.setChecked(True)
-        self.save_history_checkbox.setChecked(False)
-        self.favorites_checkbox.setChecked(False)
-        self.page_input.setText("")
-        self.download_checkbox.setChecked(False)
-        self.delay_input.setText("1")
-        self.cbz_checkbox.setChecked(True)
-        self.move_to_folder_checkbox.setChecked(False)
-        self.format_input.setText('[%ag] - %p (%i)')
-        self.output_input.setText('')
+        self.settings.setValue("page_input", self.page_input.text())
+        self.settings.setValue("delay_input", self.delay_input.text())
+        self.settings.setValue("format_input", self.format_input.text())
 
-    def multiplePreset(self):
-        # self.ids_input.setText("")
-        self.rm_origin_dir_checkbox.setChecked(False)
-        self.save_history_checkbox.setChecked(True)
-        self.favorites_checkbox.setChecked(False)
-        self.page_input.setText("")
-        self.download_checkbox.setChecked(True)
-        self.delay_input.setText("1")
-        self.cbz_checkbox.setChecked(True)
-        self.move_to_folder_checkbox.setChecked(True)
-        self.format_input.setText('[%ag] - %p (%i)')
-        self.output_input.setText('')
+        self.settings.endGroup()
+
+    def load_preset(self, preset_name):
+        cleaned_preset_name = preset_name.replace(" ", "-")
+        self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
+
+        self.rm_origin_dir_checkbox.setChecked(self.settings.value("rm_origin_dir_checkbox", False, type=bool))
+        self.save_history_checkbox.setChecked(self.settings.value("save_history_checkbox", False, type=bool))
+        self.favorites_checkbox.setChecked(self.settings.value("favorites_checkbox", False, type=bool))
+        self.download_checkbox.setChecked(self.settings.value("download_checkbox", False, type=bool))
+        self.cbz_checkbox.setChecked(self.settings.value("cbz_checkbox", False, type=bool))
+        self.move_to_folder_checkbox.setChecked(self.settings.value("move_to_folder_checkbox", False, type=bool))
+        self.pdf_checkbox.setChecked(self.settings.value("pdf_checkbox", False, type=bool))
+        self.dry_run_checkbox.setChecked(self.settings.value("dry_run_checkbox", False, type=bool))
+
+        self.page_input.setText(self.settings.value("page_input", "1-6", type=str))
+        self.delay_input.setText(self.settings.value("delay_input", "1", type=str))
+        self.format_input.setText(self.settings.value("format_input", "[%ag] - %p (%i)", type=str))
+
+        self.settings.endGroup()
 
     def set_default_directory(self):
         # Open a file dialog to choose the default directory
@@ -251,7 +276,7 @@ class MainWindow(QMainWindow):
     
     def set_cookie(self):
         if self.cookieHandler is None or not self.cookieHandler.isVisible():
-            self.cookieHandler = CookieHandler(self)  # Pass MainWindow instance to CookieHandler
+            self.cookieHandler = CookieHandler(self, self.settings)  # Pass MainWindow instance to CookieHandler
         self.cookieHandler.show()
 
 
