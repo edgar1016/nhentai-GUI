@@ -22,7 +22,7 @@ QWidget#centralContainer {
 }
 
 /* Set the text color for all labels, buttons, line edits, and check boxes */
-QLabel, QPushButton, QLineEdit, QCheckBox{
+QLabel, QPushButton, QLineEdit, QCheckBox {
     color: white;
     border-radius: 4px;
 }
@@ -137,6 +137,64 @@ QInputDialog {
 QMessageBox {
     background-color: #36393f; /* Set your desired background color */
     color: white;
+}
+
+QComboBox {
+    background-color: #2C2F33;
+    border: 1px solid #23272A;
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+}
+
+/* Apply to the drop-down arrow indicator */
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left-width: 1px;
+    border-left-color: #23272A;
+    border-left-style: solid;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+QComboBox::down-arrow {
+    image: url("./resources/down_arrow.svg");
+}
+
+/* Apply to the menu item in the drop-down */
+QComboBox QAbstractItemView::item {
+    padding: 4px 5px;
+    color: white;
+    background-color: #36393f;
+    border: 1px solid #23272A;
+}
+
+/* Apply to the selected menu item in the drop-down */
+QComboBox QAbstractItemView::item:selected {
+    background-color: #ED2553;
+    border: 1px solid #23272A;
+}
+
+QComboBox QAbstractItemView {
+    outline: none;
+    border: none;
+}
+
+/* Apply to the QComboBox when it's in a dropped-down state */
+QComboBox::down-arrow:on {
+    top: 1px;
+    left: 1px;
+}
+
+QComboBox::down-arrow:pressed {
+    top: 2px;
+    left: 2px;
+}
+
+QComboBox::down-arrow:hover {
+    background-color: #ED2553;
 }
 
 #TitleLabel {
