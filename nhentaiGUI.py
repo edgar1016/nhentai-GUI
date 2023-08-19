@@ -36,6 +36,7 @@ class MainWindow(QMainWindow):
     def init_ui(self):
         # Create the custom title bar and add it to the layout
         custom_title_bar = CustomTitleBar(self, self.settings)
+        self.file_name = None
 
         self.setWindowTitle("nHentai GUI")
         self.setGeometry(100, 100, 510, 300)
@@ -53,6 +54,11 @@ class MainWindow(QMainWindow):
 
         self.run_button = QPushButton("Run Commands")
         self.run_button.clicked.connect(self.run_commands)
+
+        self.file_button = QPushButton("Select File")
+        self.file_button.setObjectName("file_button")
+        self.file_button.clicked.connect(self.use_file)
+        self.file_button.setEnabled(False)
 
         self.ids_input = QLineEdit("302294 317039")
         self.ids_input.setObjectName("ids_input")
@@ -115,6 +121,11 @@ class MainWindow(QMainWindow):
         self.search_checkbox.setObjectName("search_checkbox")
         self.search_checkbox.stateChanged.connect(self.search_checkbox_state_changed)
         # self.search_checkbox.setMaximumWidth(135)
+
+        self.file_checkbox = QCheckBox("File: ")
+        self.file_checkbox.setObjectName("file_checkbox")
+        self.file_checkbox.stateChanged.connect(self.file_checkbox_state_changed)
+        self.file_checkbox.setMaximumWidth(90)
 
         # QLabels
         self.page_input_label = QLabel("Page Range \n(e.g. 1-6, 0 = all):")
@@ -190,6 +201,12 @@ class MainWindow(QMainWindow):
         fifth_row_layout.addWidget(self.regen_cbz_checkbox)
         layout.addLayout(fifth_row_layout)
 
+        # Create QHBoxLayout for the sixth row of input elements and checkboxes
+        sixth_row_layout = QHBoxLayout()
+        sixth_row_layout.addWidget(self.file_checkbox)
+        sixth_row_layout.addWidget(self.file_button)
+        layout.addLayout(sixth_row_layout)
+
 
         layout.addWidget(QLabel("Format:"))
         layout.addWidget(self.format_input)
@@ -221,7 +238,8 @@ class MainWindow(QMainWindow):
             self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
             self.pdf_checkbox, self.dry_run_checkbox, self.show_checkbox, self.no_html_checkbox,
-            self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox
+            self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox,
+            self.file_checkbox
         ]
         for checkbox in checkboxes:
             checkbox.setChecked(self.settings.value(checkbox.objectName(), False, type=bool))
@@ -243,7 +261,8 @@ class MainWindow(QMainWindow):
             self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
             self.pdf_checkbox, self.dry_run_checkbox, self.show_checkbox, self.no_html_checkbox,
-            self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox
+            self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox,
+            self.file_checkbox
         ]
         for checkbox in checkboxes:
             self.settings.setValue(checkbox.objectName(), checkbox.isChecked())
@@ -283,6 +302,8 @@ class MainWindow(QMainWindow):
             commands += " --meta"     
         if self.regen_cbz_checkbox.isChecked():
             commands += " --regenerate-cbz" 
+        if self.file_checkbox.isChecked() and self.file_name is not None:
+            commands += f" --file=\"{self.file_name}\"" 
         if self.search_checkbox.isChecked():
             commands += f" --search \"{self.ids_input.text()}\"" 
         if self.page_input.text():
@@ -381,6 +402,22 @@ class MainWindow(QMainWindow):
             self.ids_input.setPlaceholderText("Search:")
         else:
             self.ids_input.setPlaceholderText("IDs (e.g., 302294 or #317039)")
+
+    def file_checkbox_state_changed(self, state):
+        if state == 2:
+            self.file_button.setEnabled(True)
+        else:
+            self.file_button.setEnabled(False)
+
+    def use_file(self):
+        file_name, _ = QFileDialog.getOpenFileName(self, "Select .txt File", "", "Text Files (*.txt);;All Files (*)")
+
+        if file_name:
+            self.file_button.setText(f"\"{file_name}\"")
+            self.file_name = file_name
+        else:
+            self.file_button.setText("Select File")
+            self.file_name = None
 
     def clean_language(self):
         confirm = QMessageBox.question(self, "Confirmation", "Are you sure you want to do this?",

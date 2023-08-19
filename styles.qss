@@ -40,6 +40,11 @@ QPushButton:hover {
     border-color: #f15478;
 }
 
+QPushButton:disabled {
+    background-color: #36393f; /* Set your desired background color */
+    color: #CCCCCC; /* Set your desired text color */
+}
+
 /* Style the QLineEdit and QCheckBox */
 QLineEdit, QCheckBox {
     background-color: #2C2F33;
