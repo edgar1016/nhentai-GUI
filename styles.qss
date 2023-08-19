@@ -3,17 +3,17 @@
 /* Set the font for the entire application */
 * {
     font-family: "Noto Sans";
-    font-size: 10pt; /* Adjust the font size as needed */
+    font-size: 10pt;
 }
 
 CookieHandler {
-    background-color: #36393f; /* Set your desired background color */
+    background-color: #36393f; 
     border-radius: 8px;
 }
 
 QMainWindow {
     background-color: #36393f;
-    border-radius: 8px; /* Add rounded corners to the main window */
+    border-radius: 8px;
 }
 
 /* Apply the rounded corners to the central container */
@@ -41,8 +41,8 @@ QPushButton:hover {
 }
 
 QPushButton:disabled {
-    background-color: #36393f; /* Set your desired background color */
-    color: #CCCCCC; /* Set your desired text color */
+    background-color: #36393f;
+    color: #CCCCCC;
 }
 
 /* Style the QLineEdit and QCheckBox */
@@ -89,58 +89,58 @@ QMenu::item:selected {
 }
 
 QCheckBox::indicator:unchecked {
-    background-color: #36393f; /* Change to your desired color */
-    border: 1px solid #36393f; /* Change to your desired color */
-    width: 16px; /* Adjust the size as needed */
-    height: 16px; /* Adjust the size as needed */
+    background-color: #36393f;
+    border: 1px solid #36393f;
+    width: 16px;
+    height: 16px;
     border-radius: 2px;
 }
 
 QCheckBox::indicator:unchecked:hover {
-    background-color: #f15478; /* Change to your desired color */
-    border: 1px solid #f15478; /* Change to your desired color */
-    width: 16px; /* Adjust the size as needed */
-    height: 16px; /* Adjust the size as needed */
+    background-color: #f15478;
+    border: 1px solid #f15478;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
 }
 
 QCheckBox::indicator:unchecked:pressed {
-    background-color: #ED2553; /* Change to your desired color */
-    border: 1px solid #ED2553; /* Change to your desired color */
-    width: 16px; /* Adjust the size as needed */
-    height: 16px; /* Adjust the size as needed */
+    background-color: #ED2553;
+    border: 1px solid #ED2553;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
 }
 
 QCheckBox::indicator:checked {
-    background-color: #ED2553; /* Change to your desired color */
-    border: 1px solid #ED2553; /* Change to your desired color */
-    width: 16px; /* Adjust the size as needed */
-    height: 16px; /* Adjust the size as needed */
+    background-color: #ED2553;
+    border: 1px solid #ED2553;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
 }
 
 QCheckBox::indicator:checked:hover {
-    background-color: #f15478; /* Change to your desired hover color */
-    border-color: #f15478; /* Change to your desired hover color */
+    background-color: #f15478;
+    border-color: #f15478;
     border-radius: 4px;
 }
 
 QCheckBox::indicator:checked:pressed {
-    background-color: #36393f; /* Change to your desired color */
-    border: 1px solid #36393f; /* Change to your desired color */
-    width: 16px; /* Adjust the size as needed */
-    height: 16px; /* Adjust the size as needed */
+    background-color: #36393f;
+    border: 1px solid #36393f;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
 }
 
 QInputDialog {
-    background-color: #36393f; /* Set your desired background color */
+    background-color: #36393f;
     color: white;
 }
 
 QMessageBox {
-    background-color: #36393f; /* Set your desired background color */
+    background-color: #36393f;
     color: white;
 }
 
@@ -166,9 +166,9 @@ QComboBox::drop-down {
 
 QComboBox::down-arrow {
     image: url("./resources/down_arrow.svg");
-    width: 14px; /* Adjust the width as needed */
-    height: 16px; /* Adjust the height as needed */
-    color: #ed2553; /* Set the color */
+    width: 14px;
+    height: 16px;
+    color: #ed2553;
 }
 
 /* Apply to the menu item in the drop-down */

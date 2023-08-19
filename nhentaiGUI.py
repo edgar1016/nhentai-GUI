@@ -120,7 +120,6 @@ class MainWindow(QMainWindow):
         self.search_checkbox = QCheckBox("Search")
         self.search_checkbox.setObjectName("search_checkbox")
         self.search_checkbox.stateChanged.connect(self.search_checkbox_state_changed)
-        # self.search_checkbox.setMaximumWidth(135)
 
         self.file_checkbox = QCheckBox("File: ")
         self.file_checkbox.setObjectName("file_checkbox")
@@ -151,18 +150,19 @@ class MainWindow(QMainWindow):
         # QComboBox
         self.sorting_combo_box = QComboBox()
         self.sorting_combo_box.addItems(['-','Recent','Popular','Popular Today','Popular Week'])
+        self.sorting_combo_box.setObjectName("sorting_combo_box")
         self.sorting_combo_box.setMinimumWidth(130)
 
         # Add widgets to layout
 
-        # Create QHBoxLayout for the first row of input elements and checkboxes
+        # Create QHBoxLayout for the first row
         first_row_layout = QHBoxLayout()
         first_row_layout.addWidget(self.search_checkbox)
         first_row_layout.addWidget(self.ids_input)
         first_row_layout.addWidget(self.sorting_combo_box)
         layout.addLayout(first_row_layout)
 
-        # Create QHBoxLayout for the second row of input elements and checkboxes
+        # Create QHBoxLayout for the second row
         second_row_layout = QHBoxLayout()
         second_row_layout.addWidget(self.rm_origin_dir_checkbox)
         second_row_layout.addSpacing(5)
@@ -172,7 +172,7 @@ class MainWindow(QMainWindow):
         second_row_layout.addWidget(self.pdf_checkbox)
         layout.addLayout(second_row_layout)
 
-        # Create QHBoxLayout for the third row of input elements and checkboxes
+        # Create QHBoxLayout for the third row
         third_row_layout = QHBoxLayout()
         third_row_layout.addWidget(self.save_history_checkbox)
         third_row_layout.addWidget(self.page_input)
@@ -183,7 +183,7 @@ class MainWindow(QMainWindow):
         third_row_layout.addStretch(1)
         layout.addLayout(third_row_layout)
 
-        # Create QHBoxLayout for the fourth row of input elements and checkboxes
+        # Create QHBoxLayout for the fourth row
         fourth_row_layout = QHBoxLayout()
         fourth_row_layout.addWidget(self.favorites_checkbox)
         fourth_row_layout.addWidget(self.download_checkbox)
@@ -192,7 +192,7 @@ class MainWindow(QMainWindow):
         fourth_row_layout.addStretch(1)
         layout.addLayout(fourth_row_layout)
 
-        # Create QHBoxLayout for the fifth row of input elements and checkboxes
+        # Create QHBoxLayout for the fifth row
         fifth_row_layout = QHBoxLayout()
         fifth_row_layout.addWidget(self.show_checkbox)
         fifth_row_layout.addWidget(self.no_html_checkbox)
@@ -201,13 +201,13 @@ class MainWindow(QMainWindow):
         fifth_row_layout.addWidget(self.regen_cbz_checkbox)
         layout.addLayout(fifth_row_layout)
 
-        # Create QHBoxLayout for the sixth row of input elements and checkboxes
+        # Create QHBoxLayout for the sixth row
         sixth_row_layout = QHBoxLayout()
         sixth_row_layout.addWidget(self.file_checkbox)
         sixth_row_layout.addWidget(self.file_button)
         layout.addLayout(sixth_row_layout)
 
-
+        # Add inputs to the QVBoxLayout
         layout.addWidget(QLabel("Format:"))
         layout.addWidget(self.format_input)
         layout.addWidget(QLabel("Output Folder:"))
@@ -255,6 +255,15 @@ class MainWindow(QMainWindow):
         for line_edit, default_value in line_edits:
             line_edit.setText(self.settings.value(line_edit.objectName(), default_value, type=str))
 
+
+
+        combo_boxes = [
+            self.sorting_combo_box
+        ]
+        for cbBox in combo_boxes:
+            cbBox.setCurrentIndex(self.settings.value(cbBox.objectName(), cbBox.setCurrentIndex(0), type=int))
+
+
     def save_ui_states(self):
         # Save checkbox states
         checkboxes = [
@@ -273,6 +282,13 @@ class MainWindow(QMainWindow):
         ]
         for line_edit in line_edits:
             self.settings.setValue(line_edit.objectName(), line_edit.text())
+
+        # Save QComboBox states
+        combo_boxes = [
+            self.sorting_combo_box
+        ]
+        for cbBox in combo_boxes:
+            self.settings.setValue(cbBox.objectName(), cbBox.currentIndex())
 
     def run_commands(self):
         # Assemble the nhentai command based on user inputs
@@ -355,6 +371,8 @@ class MainWindow(QMainWindow):
             return
         
         cleaned_preset_name = preset_name.replace(" ", "-")
+
+        # Create a presents group in the settings.ini
         self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
 
         self.save_ui_states()
@@ -363,6 +381,8 @@ class MainWindow(QMainWindow):
 
     def load_preset(self, preset_name):
         cleaned_preset_name = preset_name.replace(" ", "-")
+
+        # Load the presents group in the settings.ini
         self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
 
         self.load_ui_states()
@@ -370,7 +390,6 @@ class MainWindow(QMainWindow):
         self.settings.endGroup()
 
     def set_default_directory(self):
-        # Open a file dialog to choose the default directory
         default_dir = QFileDialog.getExistingDirectory(self, "Select Default Directory")
         if default_dir:
             self.settings.setValue("default_doujins_folder", default_dir)
@@ -387,6 +406,7 @@ class MainWindow(QMainWindow):
     def set_language(self):
         items = ['english','chinese','japanese','translated',]
 
+        # Combo Box to choose between the language constants
         language, ok = QInputDialog.getItem(self, 'Set Language', 'Enter Language:', items)
 
         if ok:
@@ -420,9 +440,11 @@ class MainWindow(QMainWindow):
             self.file_name = None
 
     def clean_language(self):
+        # TODO this is currently none functional in the nhentai package
         confirm = QMessageBox.question(self, "Confirmation", "Are you sure you want to do this?",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, 
                                        QMessageBox.StandardButton.No)
+        
         if confirm == QMessageBox.StandardButton.Yes:
             self.run_specific_command(" --clean-language")
         else:
@@ -430,7 +452,8 @@ class MainWindow(QMainWindow):
             return
         
     def clean_download_history(self):
-        confirm = QMessageBox.question(self, "Confirmation", "Are you sure you want to do this?\nThis cannot be undone: Delete All Download History",
+        confirm = QMessageBox.question(self, "Confirmation", 
+                                       "Are you sure you want to do this?\nThis cannot be undone: Delete All Download History",
                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, 
                                        QMessageBox.StandardButton.No)
         if confirm == QMessageBox.StandardButton.Yes:

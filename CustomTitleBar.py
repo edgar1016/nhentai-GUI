@@ -39,32 +39,33 @@ class CustomTitleBar(QWidget):
         self.title_icon.setPixmap(icon.scaled(QSize(40, 20)))  # Set the size of the icon
 
         # Adjust the margins and spacing for the title_label and icon
-        self.title_layout.setContentsMargins(0, 0, 0, 0)  # Reset margins to zero
-        self.title_layout.setSpacing(-5)  # Adjust spacing between elements
+        self.title_layout.setContentsMargins(0, 0, 0, 0)
+        self.title_layout.setSpacing(-5)
 
-        # Add the title_icon and title_label with a stretch between them to push them to the left
-        self.title_layout.addWidget(self.title_icon)  # Add the title_icon
-        self.title_layout.addStretch(0)  # Add a stretch between the icon and title_label
-        self.title_layout.addWidget(self.title_label)  # Add the title_label
+        # Add the title_icon and title_label
+        self.title_layout.addWidget(self.title_icon)
+        self.title_layout.addStretch(0)
+        self.title_layout.addWidget(self.title_label)
 
-        # Add the title_label with a stretch after it to push it to the left
-        self.title_layout.addWidget(self.title_label)  # Add the title_label
-        self.title_layout.addStretch(1)  # Add a stretch after the title_label
+        # Add the title_label
+        self.title_layout.addWidget(self.title_label) 
+        self.title_layout.addStretch(1)
 
         # Spacer to push buttons to the right
         self.title_layout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed))
 
         # Minimize button with style
         self.minimize_button = QPushButton("─")
-        self.minimize_button.setObjectName("MinimizeButton")  # Apply a style object name
+        self.minimize_button.setObjectName("MinimizeButton")
         self.minimize_button.setFixedHeight(30)
         self.minimize_button.setFixedWidth(30)
         self.minimize_button.clicked.connect(self.minimize_window)
         self.title_layout.addWidget(self.minimize_button)
 
-        # # Maximize/Restore button with style !Reszing is disabled!
+        # # Maximize/Restore button with style 
+        # Reszing is disabled! TODO add proper scaling
         # self.maximize_restore_button = QPushButton("□")
-        # self.maximize_restore_button.setObjectName("MaximizeRestoreButton")  # Apply a style object name
+        # self.maximize_restore_button.setObjectName("MaximizeRestoreButton")
         # self.maximize_restore_button.setFixedHeight(30)
         # self.maximize_restore_button.setFixedWidth(30)
         # self.maximize_restore_button.clicked.connect(self.toggle_maximize_restore)
@@ -72,7 +73,7 @@ class CustomTitleBar(QWidget):
 
         # Close button with style
         self.close_button = QPushButton("✕")
-        self.close_button.setObjectName("CloseButton")  # Apply a style object name
+        self.close_button.setObjectName("CloseButton")
         self.close_button.setFixedHeight(30)
         self.close_button.setFixedWidth(30)
         self.close_button.clicked.connect(self.close_window)
@@ -98,7 +99,7 @@ class CustomTitleBar(QWidget):
             options_menu.addAction(clean_download_history_action)
 
             # Add clean language action 
-            # Disabled since it currently doesn't do anything
+            # Disabled since it currently doesn't do anything TODO
             # clean_language_action = QAction("Clean Language", self)
             # clean_language_action.triggered.connect(self.clean_language)
             # options_menu.addAction(clean_language_action)

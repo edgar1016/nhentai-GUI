@@ -86,7 +86,7 @@ class CookieHandler(QWidget):
 
     def show_empty_fields_dialog(self):
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Icon.Warning)  # Use the correct enum value for the warning icon
+        msg.setIcon(QMessageBox.Icon.Warning)
         msg.setText("All fields are empty. Please enter some data.")
         msg.setWindowTitle("Empty Fields")
         msg.exec()
