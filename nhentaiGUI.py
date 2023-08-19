@@ -7,9 +7,10 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QLabel,
     QPushButton, QLineEdit, QCheckBox, QInputDialog,
     QFileDialog, QFrame, QHBoxLayout, QMessageBox,
-    QComboBox
+    QComboBox, QDialog
 )
 from PyQt6.QtCore import QSettings, QFile, Qt
+from requests import options
 
 from CustomTitleBar import CustomTitleBar
 from CookieHandler import CookieHandler
@@ -388,6 +389,32 @@ class MainWindow(QMainWindow):
         self.load_ui_states()
 
         self.settings.endGroup()
+
+    def update_preset(self):
+        preset_names = self.settings.childGroups()
+        sorted_preset_names = sorted(preset_names, key=lambda x: x.lower())
+        presentable_presets = [preset.replace("Preset_", "").replace("-", " ") for preset in sorted_preset_names]
+
+        input_dialog = QInputDialog()
+        input_dialog.setWindowTitle("Update Preset")
+        input_dialog.setLabelText("Select a Preset")
+        input_dialog.setOkButtonText("Update")
+
+        style_file = QFile("styles.qss")
+        if style_file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):
+            style_sheet = style_file.readAll()
+            input_dialog.setStyleSheet(str(style_sheet, encoding="utf-8"))
+
+        input_dialog.setOption(QInputDialog.InputDialogOption.UseListViewForComboBoxItems)
+        input_dialog.setComboBoxItems(presentable_presets)
+
+        if input_dialog.exec() == 1:
+            selected_preset = input_dialog.textValue()
+            cleaned_preset_name = selected_preset.replace(" ", "-")
+
+            self.settings.beginGroup(f"Preset_{cleaned_preset_name}")
+            self.save_ui_states()
+            self.settings.endGroup()
 
     def set_default_directory(self):
         default_dir = QFileDialog.getExistingDirectory(self, "Select Default Directory")

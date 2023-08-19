@@ -201,6 +201,25 @@ QComboBox::down-arrow:pressed {
     left: 2px;
 }
 
+QListView {
+    background-color: #2C2F33;
+    color: white;
+    border: 1px solid #23272A;
+    selection-background-color: #ED2553;
+    selection-color: white;
+    outline: none;
+    border: none;
+}
+
+QListView::item {
+    padding: 4px 5px;
+}
+
+QListView::item:selected {
+    background-color: #ED2553;
+    border: 1px solid #23272A;
+}
+
 #TitleLabel {
     font-size: 16px;
     font-weight: bold;
