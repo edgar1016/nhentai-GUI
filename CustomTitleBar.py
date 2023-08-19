@@ -128,7 +128,7 @@ class CustomTitleBar(QWidget):
             self.preset_menu = menubar.addMenu("Presets")
 
             # Get preset names from settings
-            self.populate_prest_menu()
+            self.populate_preset_menu()
 
             self.menuLayout = QHBoxLayout()
             self.menuLayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -140,12 +140,12 @@ class CustomTitleBar(QWidget):
 
     def add_preset(self):
         self.main_window.add_preset()
-        self.populate_prest_menu()
+        self.populate_preset_menu()
 
     def load_preset(self, preset_name):
         self.main_window.load_preset(preset_name)
 
-    def populate_prest_menu(self):
+    def populate_preset_menu(self):
         self.preset_menu.clear()
 
         preset_names = self.settings.childGroups()
@@ -153,7 +153,7 @@ class CustomTitleBar(QWidget):
 
         for preset_name in sorted_preset_names:
             cleaned_preset_name = preset_name.replace("Preset_", "").replace("-", " ")
-            preset_menu_item = QAction(cleaned_preset_name, self)
+            preset_menu_item = QAction(cleaned_preset_name, self.preset_menu)
             preset_menu_item.triggered.connect(partial(self.load_preset, cleaned_preset_name))
             self.preset_menu.addAction(preset_menu_item)
 
@@ -186,6 +186,18 @@ class CustomTitleBar(QWidget):
 
     def clean_download_history(self):
         self.main_window.clean_download_history()
+
+    def contextMenuEvent(self, event):
+        context_menu = QMenu(self)
+        add_action = context_menu.addAction("Add Preset")
+        update_action = context_menu.addAction("Update Preset")
+
+        action = context_menu.exec(event.globalPos())
+
+        if action == add_action:
+            self.add_preset()
+        elif action == update_action:
+            self.main_window.update_preset()
     
     # Implement mouse event handlers to enable window dragging
     def mousePressEvent(self, event: QMouseEvent):
