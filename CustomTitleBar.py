@@ -97,10 +97,11 @@ class CustomTitleBar(QWidget):
             clean_download_history_action.triggered.connect(self.clean_download_history)
             options_menu.addAction(clean_download_history_action)
 
-            # Add clean language action
-            clean_language_action = QAction("Clean Language", self)
-            clean_language_action.triggered.connect(self.clean_language)
-            options_menu.addAction(clean_language_action)
+            # Add clean language action 
+            # Disabled since it currently doesn't do anything
+            # clean_language_action = QAction("Clean Language", self)
+            # clean_language_action.triggered.connect(self.clean_language)
+            # options_menu.addAction(clean_language_action)
 
             # Add action for setting cookie
             set_cookie_action = QAction("Set Cookie", self)
@@ -112,7 +113,7 @@ class CustomTitleBar(QWidget):
             set_default_dir_action.triggered.connect(self.set_default_directory)
             options_menu.addAction(set_default_dir_action)
 
-            # Add an action for setting default directory
+            # Add an action for setting Language
             set_language_action = QAction("Set Language", self)
             set_language_action.triggered.connect(self.set_language)
             options_menu.addAction(set_language_action)

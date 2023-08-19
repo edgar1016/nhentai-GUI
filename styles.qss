@@ -161,6 +161,9 @@ QComboBox::drop-down {
 
 QComboBox::down-arrow {
     image: url("./resources/down_arrow.svg");
+    width: 14px; /* Adjust the width as needed */
+    height: 16px; /* Adjust the height as needed */
+    color: #ed2553; /* Set the color */
 }
 
 /* Apply to the menu item in the drop-down */
@@ -191,10 +194,6 @@ QComboBox::down-arrow:on {
 QComboBox::down-arrow:pressed {
     top: 2px;
     left: 2px;
-}
-
-QComboBox::down-arrow:hover {
-    background-color: #ED2553;
 }
 
 #TitleLabel {

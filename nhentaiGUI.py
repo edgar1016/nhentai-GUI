@@ -54,11 +54,9 @@ class MainWindow(QMainWindow):
         self.run_button = QPushButton("Run Commands")
         self.run_button.clicked.connect(self.run_commands)
 
-        # Elements for nhentai commands
-        self.ids_input_label = QLabel("IDs (e.g., 302294 317039):")
-        self.ids_input_label.setStyleSheet("padding-left: 80px;")
         self.ids_input = QLineEdit("302294 317039")
         self.ids_input.setObjectName("ids_input")
+        self.ids_input.setPlaceholderText("IDs (e.g., 302294 or #317039)")
 
         # Chech Boxes
         self.rm_origin_dir_checkbox = QCheckBox("Remove Original Directory")
@@ -93,9 +91,9 @@ class MainWindow(QMainWindow):
         self.dry_run_checkbox.setObjectName("dry_run_checkbox")
         self.dry_run_checkbox.setMinimumWidth(130)
 
-        self.html_checkbox = QCheckBox("HTML")
-        self.html_checkbox.setObjectName("html_checkbox")
-        self.html_checkbox.setMaximumWidth(90)
+        self.show_checkbox = QCheckBox("Show")
+        self.show_checkbox.setObjectName("show_checkbox")
+        self.show_checkbox.setMaximumWidth(90)
 
         self.no_html_checkbox = QCheckBox("No HTML")
         self.no_html_checkbox.setObjectName("no_html_checkbox")
@@ -115,6 +113,7 @@ class MainWindow(QMainWindow):
 
         self.search_checkbox = QCheckBox("Search")
         self.search_checkbox.setObjectName("search_checkbox")
+        self.search_checkbox.stateChanged.connect(self.search_checkbox_state_changed)
         # self.search_checkbox.setMaximumWidth(135)
 
         # QLabels
@@ -144,7 +143,6 @@ class MainWindow(QMainWindow):
         self.sorting_combo_box.setMinimumWidth(130)
 
         # Add widgets to layout
-        layout.addWidget(self.ids_input_label)
 
         # Create QHBoxLayout for the first row of input elements and checkboxes
         first_row_layout = QHBoxLayout()
@@ -153,7 +151,7 @@ class MainWindow(QMainWindow):
         first_row_layout.addWidget(self.sorting_combo_box)
         layout.addLayout(first_row_layout)
 
-        # Create QHBoxLayout for the first row of input elements and checkboxes
+        # Create QHBoxLayout for the second row of input elements and checkboxes
         second_row_layout = QHBoxLayout()
         second_row_layout.addWidget(self.rm_origin_dir_checkbox)
         second_row_layout.addSpacing(5)
@@ -163,7 +161,7 @@ class MainWindow(QMainWindow):
         second_row_layout.addWidget(self.pdf_checkbox)
         layout.addLayout(second_row_layout)
 
-        # Create QHBoxLayout for the second row of input elements and checkboxes
+        # Create QHBoxLayout for the third row of input elements and checkboxes
         third_row_layout = QHBoxLayout()
         third_row_layout.addWidget(self.save_history_checkbox)
         third_row_layout.addWidget(self.page_input)
@@ -174,7 +172,7 @@ class MainWindow(QMainWindow):
         third_row_layout.addStretch(1)
         layout.addLayout(third_row_layout)
 
-        # Create QHBoxLayout for the third row of input elements and checkboxes
+        # Create QHBoxLayout for the fourth row of input elements and checkboxes
         fourth_row_layout = QHBoxLayout()
         fourth_row_layout.addWidget(self.favorites_checkbox)
         fourth_row_layout.addWidget(self.download_checkbox)
@@ -183,9 +181,9 @@ class MainWindow(QMainWindow):
         fourth_row_layout.addStretch(1)
         layout.addLayout(fourth_row_layout)
 
-        # Create QHBoxLayout for the fourth row of input elements and checkboxes
+        # Create QHBoxLayout for the fifth row of input elements and checkboxes
         fifth_row_layout = QHBoxLayout()
-        fifth_row_layout.addWidget(self.html_checkbox)
+        fifth_row_layout.addWidget(self.show_checkbox)
         fifth_row_layout.addWidget(self.no_html_checkbox)
         fifth_row_layout.addWidget(self.gen_main_checkbox)
         fifth_row_layout.addWidget(self.meta_checkbox)
@@ -222,7 +220,7 @@ class MainWindow(QMainWindow):
         checkboxes = [
             self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
-            self.pdf_checkbox, self.dry_run_checkbox, self.html_checkbox, self.no_html_checkbox,
+            self.pdf_checkbox, self.dry_run_checkbox, self.show_checkbox, self.no_html_checkbox,
             self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox
         ]
         for checkbox in checkboxes:
@@ -244,7 +242,7 @@ class MainWindow(QMainWindow):
         checkboxes = [
             self.rm_origin_dir_checkbox, self.save_history_checkbox, self.favorites_checkbox,
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
-            self.pdf_checkbox, self.dry_run_checkbox, self.html_checkbox, self.no_html_checkbox,
+            self.pdf_checkbox, self.dry_run_checkbox, self.show_checkbox, self.no_html_checkbox,
             self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox
         ]
         for checkbox in checkboxes:
@@ -273,8 +271,8 @@ class MainWindow(QMainWindow):
             commands += " --favorites"
         if self.pdf_checkbox.isChecked():
             commands += " --pdf"
-        if self.html_checkbox.isChecked():
-            commands += " --html"
+        if self.show_checkbox.isChecked():
+            commands += " --show"
         if self.no_html_checkbox.isChecked():
             commands += " --no-html"
         if self.dry_run_checkbox.isChecked():
@@ -366,13 +364,23 @@ class MainWindow(QMainWindow):
         self.cookieHandler.show()
 
     def set_language(self):
-        language, ok = QInputDialog.getText(self, 'Set Language', 'Enter Language:')
+        items = ['english','chinese','japanese','translated',]
+
+        language, ok = QInputDialog.getItem(self, 'Set Language', 'Enter Language:', items)
+
         if ok:
             command = (f" --language={language}")
             self.run_specific_command(command)
-            print(f"The language {language} has been set!")
         else:
             return
+        
+    def search_checkbox_state_changed(self, state):
+        self.ids_input.clear()
+
+        if state == 2:
+            self.ids_input.setPlaceholderText("Search:")
+        else:
+            self.ids_input.setPlaceholderText("IDs (e.g., 302294 or #317039)")
 
     def clean_language(self):
         confirm = QMessageBox.question(self, "Confirmation", "Are you sure you want to do this?",
