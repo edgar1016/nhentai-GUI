@@ -1,2 +1,4 @@
 /__pycache__
 /settings.ini
+/output
+/auto-py-to-exe_build.json

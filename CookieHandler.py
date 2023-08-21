@@ -26,8 +26,7 @@ class CookieHandler(QWidget):
     def initUI(self):
         # Create a custom title bar
         custom_title_bar = CustomTitleBar(self, self.settings)
-
-        style_file = QFile("styles.qss")
+        style_file = QFile(":/resources/styles.qss")
         if style_file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):
             style_sheet = style_file.readAll()
             self.setStyleSheet(str(style_sheet, encoding="utf-8"))

@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file>resources/styles.qss</file>
+        <file>resources/down_arrow.svg</file>
+        <file>resources/nHentai.svg</file>
+        <file>resources/favicon.ico</file>
+    </qresource>
+</RCC>

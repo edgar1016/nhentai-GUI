@@ -1,13 +1,12 @@
-from functools import partial
-import os
-
 from PyQt6.QtWidgets import (
     QMainWindow, QVBoxLayout, QLabel,
     QPushButton, QWidget, QMenu,QHBoxLayout, 
     QSpacerItem, QSizePolicy, QMenuBar
 )
+
 from PyQt6.QtGui import QAction, QMouseEvent, QPixmap
 from PyQt6.QtCore import Qt, QSize
+from functools import partial
 
 class CustomTitleBar(QWidget):
     def __init__(self, main_window, settings):
@@ -34,8 +33,7 @@ class CustomTitleBar(QWidget):
         
         # Icon for the title label
         self.title_icon = QLabel()
-        icon_path = os.path.join(os.path.dirname(__file__), "resources", "nHentai.svg")  # Path to the icon
-        icon = QPixmap(icon_path)
+        icon = QPixmap(":/resources/nHentai.svg")
         self.title_icon.setPixmap(icon.scaled(QSize(40, 20)))  # Set the size of the icon
 
         # Adjust the margins and spacing for the title_label and icon
@@ -149,6 +147,14 @@ class CustomTitleBar(QWidget):
         self.preset_menu.clear()
 
         preset_names = self.settings.childGroups()
+
+        if not preset_names:  # Check if the list is empty
+            # Add a placeholder action
+            placeholder_action = QAction("No Presets", self.preset_menu)
+            placeholder_action.setEnabled(False)
+            self.preset_menu.addAction(placeholder_action)
+            return 
+
         sorted_preset_names = sorted(preset_names, key=lambda x: x.lower())
 
         for preset_name in sorted_preset_names:

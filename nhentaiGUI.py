@@ -2,15 +2,15 @@ import sys
 import subprocess
 import re
 import os
+import resources_rc
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QLabel,
     QPushButton, QLineEdit, QCheckBox, QInputDialog,
     QFileDialog, QFrame, QHBoxLayout, QMessageBox,
-    QComboBox, QDialog
+    QComboBox
 )
-from PyQt6.QtCore import QSettings, QFile, Qt
-from requests import options
+from PyQt6.QtCore import QSettings, QFile, Qt, QCoreApplication
 
 from CustomTitleBar import CustomTitleBar
 from CookieHandler import CookieHandler
@@ -21,12 +21,21 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setMenuBar(None)
         self.cookieHandler = None
-        
-        # Get the directory of the script
-        script_directory = os.path.dirname(os.path.abspath(__file__))
 
-        # Determine the path for the settings file (INI) in the script's directory
-        settings_file = os.path.join(script_directory, "settings.ini")
+
+        
+        QCoreApplication.setOrganizationName("Edgar1016")
+        QCoreApplication.setApplicationName("nHentai_GUI")
+
+        # INI use for python
+        # script_directory = os.path.dirname(os.path.abspath(__file__))
+        # settings_file = os.path.join(script_directory, "settings.ini")
+        # self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
+
+
+        # INI use for built exe
+        executable_path = sys.executable
+        settings_file = os.path.join(os.path.dirname(executable_path), "settings.ini")
         self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
 
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.MSWindowsFixedSizeDialogHint | Qt.WindowType.FramelessWindowHint)
@@ -61,9 +70,9 @@ class MainWindow(QMainWindow):
         self.file_button.clicked.connect(self.use_file)
         self.file_button.setEnabled(False)
 
-        self.ids_input = QLineEdit("302294 317039")
+        self.ids_input = QLineEdit("")
         self.ids_input.setObjectName("ids_input")
-        self.ids_input.setPlaceholderText("IDs (e.g., 302294 or #317039)")
+        self.ids_input.setPlaceholderText("IDs (e.g., 317039 or #302294 )")
 
         # Chech Boxes
         self.rm_origin_dir_checkbox = QCheckBox("Remove Original Directory")
@@ -135,7 +144,7 @@ class MainWindow(QMainWindow):
         self.delay_input_label.setMaximumWidth(70)
 
         # QLineEdits
-        self.page_input = QLineEdit("1-6")
+        self.page_input = QLineEdit("")
         self.page_input.setObjectName("page_input")
         self.page_input.setMaximumWidth(50)
 
@@ -143,7 +152,7 @@ class MainWindow(QMainWindow):
         self.delay_input.setObjectName("delay_input")
         self.delay_input.setMaximumWidth(50)
 
-        self.format_input = QLineEdit('[%ag] - %p (%i)')
+        self.format_input = QLineEdit('')
         self.format_input.setObjectName("format_input")
         self.output_input = QLineEdit("")
         self.output_input.setObjectName("output_input")
@@ -217,7 +226,7 @@ class MainWindow(QMainWindow):
 
         self.load_ui_states()
 
-        style_file = QFile("styles.qss")
+        style_file = QFile(":/resources/styles.qss")
         if style_file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):
             style_sheet = style_file.readAll()
             self.setStyleSheet(str(style_sheet, encoding="utf-8"))
@@ -247,10 +256,10 @@ class MainWindow(QMainWindow):
 
         # Load QLineEdit states
         line_edits = [
-            (self.ids_input, "302294 317039"),
-            (self.page_input, "1-6"),
+            (self.ids_input, ""),
+            (self.page_input, ""),
             (self.delay_input, "1"),
-            (self.format_input, "[%ag] - %p (%i)"),
+            (self.format_input, ""),
             (self.output_input, "")
         ]
         for line_edit, default_value in line_edits:
@@ -400,7 +409,7 @@ class MainWindow(QMainWindow):
         input_dialog.setLabelText("Select a Preset")
         input_dialog.setOkButtonText("Update")
 
-        style_file = QFile("styles.qss")
+        style_file = QFile(":/resources/styles.qss")
         if style_file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):
             style_sheet = style_file.readAll()
             input_dialog.setStyleSheet(str(style_sheet, encoding="utf-8"))
@@ -488,6 +497,15 @@ class MainWindow(QMainWindow):
         else:
             print("User canceled.")
             return
+    
+    def resource_path(self, relative_path):
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
         
 
 if __name__ == "__main__":
