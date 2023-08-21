@@ -350,11 +350,13 @@ class MainWindow(QMainWindow):
             commands += " --move-to-folder"
         if self.format_input.text():
             commands += f' --format "{self.format_input.text()}"'
-        if self.output_input.text():
-            cleaned_output_text = re.sub(r'[\\/*?:"<>|]',"-",self.output_input.text())
-            commands += f' --output "{self.settings.value("default_doujins_folder", "C:/Doujins")}/{cleaned_output_text}/"'
+
+        if not self.output_input.text() and not self.settings.value("default_doujins_folder"):
+            QMessageBox.critical(self, "Error", "Please provide an output path or set the default doujins folder.")
+            return
         else:
-            commands += f' --output "{self.settings.value("default_doujins_folder", "C:/Doujins")}"'
+            commands += f' --output "{self.output_command()}"'
+
         if self.sorting_combo_box.currentText() != "-":
             if selected_sorting_option == 'Recent':
                 commands += " --sorting=recent"
@@ -375,6 +377,16 @@ class MainWindow(QMainWindow):
         commands = (f"nhentai {command}")
         print(commands)
         subprocess.Popen(commands, shell=True)
+
+    def output_command(self):
+        cleaned_output_text = re.sub(r'[\\/*?:"<>|]', "-", self.output_input.text())
+        default_folder = self.settings.value("default_doujins_folder")
+        output_path = default_folder if default_folder and not self.output_input.text() else self.output_input.text()
+        
+        if default_folder and self.output_input.text():
+            output_path = f'{default_folder}/{cleaned_output_text}/'
+
+        return output_path
         
     def add_preset(self):
         preset_name, ok = QInputDialog.getText(self, 'New Preset', 'Enter your preset name:')
@@ -434,7 +446,17 @@ class MainWindow(QMainWindow):
             self.settings.setValue("default_doujins_folder", default_dir)
 
     def open_default_directory(self):
-        path = os.path.realpath(self.settings.value("default_doujins_folder"))
+        default_folder = self.settings.value("default_doujins_folder")
+        
+        if not default_folder:
+            QMessageBox.critical(self, "Error", "Default doujins folder is not set.")
+            return
+        
+        if not os.path.exists(default_folder):
+            QMessageBox.critical(self, "Error", "Default doujins folder does not exist.")
+            return
+
+        path = os.path.realpath(default_folder)
         os.startfile(path)
     
     def set_cookie(self):
