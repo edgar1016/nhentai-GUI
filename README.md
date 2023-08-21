@@ -26,7 +26,7 @@ nHentai GUI is a graphical user interface for interacting with RicterZ's nhentai
 **Running with Python**
 1. Download and install RicterZ's nhentai repository from [here](https://github.com/RicterZ/nhentai).
 2. Install the required Python packages using pip.
-3. Run the `main.py` file from the nhentai repository to start the GUI.
+3. Run the `nhentaiGUI.py` file from the nhentai repository to start the GUI.
 
 **Running the Windows Executable**
 1. Download the latest [release](https://github.com/edgar1016/nhentai-GUI/releases/latest).
