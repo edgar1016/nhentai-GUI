@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QComboBox
 )
 from PyQt6.QtCore import QSettings, QFile, Qt, QCoreApplication
+from PyQt6.QtGui import QIcon
 
 from CustomTitleBar import CustomTitleBar
 from CookieHandler import CookieHandler
@@ -49,6 +50,8 @@ class MainWindow(QMainWindow):
         self.file_name = None
 
         self.setWindowTitle("nHentai GUI")
+        icon = QIcon(":/resources/favicon.ico")
+        self.setWindowIcon(icon)
         self.setGeometry(100, 100, 510, 300)
         self.center()
 
