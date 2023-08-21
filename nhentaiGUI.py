@@ -29,15 +29,15 @@ class MainWindow(QMainWindow):
         QCoreApplication.setApplicationName("nHentai_GUI")
 
         # INI use for python
-        # script_directory = os.path.dirname(os.path.abspath(__file__))
-        # settings_file = os.path.join(script_directory, "settings.ini")
-        # self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        settings_file = os.path.join(script_directory, "settings.ini")
+        self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
 
 
         # INI use for built exe
-        executable_path = sys.executable
-        settings_file = os.path.join(os.path.dirname(executable_path), "settings.ini")
-        self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
+        # executable_path = sys.executable
+        # settings_file = os.path.join(os.path.dirname(executable_path), "settings.ini")
+        # self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
 
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.MSWindowsFixedSizeDialogHint | Qt.WindowType.FramelessWindowHint)
 
