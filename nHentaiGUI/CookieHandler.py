@@ -131,8 +131,10 @@ class CookieHandler(QWidget):
         if self.cookie_command != "nhentai":
             print(self.cookie_command)
             subprocess.Popen(self.cookie_command, shell=True)
+            time.sleep(0.5)
         if self.user_agent_command != "nhentai":
             print(self.user_agent_command)
             subprocess.Popen(self.user_agent_command, shell=True)
+            time.sleep(0.5)
 
         self.close()
