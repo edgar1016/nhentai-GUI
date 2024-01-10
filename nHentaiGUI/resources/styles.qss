@@ -1,5 +1,3 @@
-
-
 /* Set the font for the entire application */
 * {
     font-family: "Noto Sans";
