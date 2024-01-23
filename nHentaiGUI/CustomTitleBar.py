@@ -19,9 +19,12 @@ class CustomTitleBar(QWidget):
 
         self.title_layout = QHBoxLayout()
 
+        version = '1.02'
+
         # Title label with style
         if isinstance(self.parent, QMainWindow):
-            self.title_label = QLabel('<span style="color: #ed2553;">n</span>Hentai GUI')
+            self.title_label = QLabel('<span style="color: #ed2553;">n</span>Hentai GUI' + f' v{version}')
+            self.title_label.setStyleSheet("font-size: 18px;")
         else:
             self.title_label = QLabel('Cookies 🍪')
 
@@ -46,8 +49,8 @@ class CustomTitleBar(QWidget):
         self.title_layout.addWidget(self.title_label)
 
         # Add the title_label
-        self.title_layout.addWidget(self.title_label) 
         self.title_layout.addStretch(1)
+        self.title_layout.addWidget(self.title_label)
 
         # Spacer to push buttons to the right
         self.title_layout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed))
