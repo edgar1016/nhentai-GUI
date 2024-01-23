@@ -379,7 +379,7 @@ class MainWindow(QMainWindow):
         subprocess.Popen(commands, shell=True)
 
     def output_command(self):
-        cleaned_output_text = re.sub(r'[\\/*?:"<>|]', "-", self.output_input.text())
+        cleaned_output_text = re.sub(r'[\\/*?:"<>|]', "-", self.output_input.text().strip())
         default_folder = self.settings.value("default_doujins_folder")
         output_path = default_folder if default_folder and not self.output_input.text() else self.output_input.text()
         
