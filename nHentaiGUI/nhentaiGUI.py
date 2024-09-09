@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         # settings_file = os.path.join(os.path.dirname(executable_path), "settings.ini")
         # self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
 
-        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.MSWindowsFixedSizeDialogHint | Qt.WindowType.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
 
         self.init_ui()
 
@@ -456,8 +456,15 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error", "Default doujins folder does not exist.")
             return
 
-        path = os.path.realpath(default_folder)
-        os.startfile(path)
+        try:
+            if sys.platform == "win32":
+                os.startfile(default_folder)  # For Windows
+            elif sys.platform == "Darwin": 
+                subprocess.Popen(["open", default_folder]) # macOS
+            else:  
+                subprocess.Popen(["xdg-open", default_folder]) # Linux
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to open directory: {str(e)}")
     
     def set_cookie(self):
         if self.cookieHandler is None or not self.cookieHandler.isVisible():
