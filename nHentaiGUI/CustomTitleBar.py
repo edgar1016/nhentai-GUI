@@ -85,6 +85,7 @@ class CustomTitleBar(QWidget):
         if isinstance(self.parent, QMainWindow):
             # Create the menu bar
             menubar = QMenuBar(self)
+            menubar.setNativeMenuBar(False)
             file_menu = menubar.addMenu("File")
             options_menu = QMenu("Options", self)
             file_menu.addMenu(options_menu)
