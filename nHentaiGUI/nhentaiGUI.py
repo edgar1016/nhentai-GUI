@@ -80,62 +80,77 @@ class MainWindow(QMainWindow):
         # Chech Boxes
         self.rm_origin_dir_checkbox = QCheckBox("Remove Original Directory")
         self.rm_origin_dir_checkbox.setObjectName("rm_origin_dir_checkbox")
+        self.rm_origin_dir_checkbox.setToolTip("Remove downloaded doujinshi dir when generated CBZ or PDF file")
         self.rm_origin_dir_checkbox.setMinimumWidth(200)
 
         self.save_history_checkbox = QCheckBox("Save Download History")
         self.save_history_checkbox.setObjectName("save_history_checkbox")
+        self.save_history_checkbox.setToolTip("Save downloaded doujinshis, whose will be skipped if you re-download them")
         self.save_history_checkbox.setMinimumWidth(200)
 
         self.favorites_checkbox = QCheckBox("Download Favorites")
         self.favorites_checkbox.setObjectName("favorites_checkbox")
+        self.favorites_checkbox.setToolTip("List or download your favorites")
         self.favorites_checkbox.setMinimumWidth(200)
 
         self.download_checkbox = QCheckBox("Download")
         self.download_checkbox.setObjectName("download_checkbox")
+        self.download_checkbox.setToolTip("Download doujinshi (from search results)")
         self.download_checkbox.setMinimumWidth(110)
 
         self.move_to_folder_checkbox = QCheckBox("Move to Folder")
         self.move_to_folder_checkbox.setObjectName("move_to_folder_checkbox")
+        self.move_to_folder_checkbox.setToolTip("When generating CBZ or PDF file removes files in doujinshi directory then move new archive to a folder with same name")
         self.move_to_folder_checkbox.setMinimumWidth(130)
 
         self.cbz_checkbox = QCheckBox("CBZ")
         self.cbz_checkbox.setObjectName("cbz_checkbox")
+        self.cbz_checkbox.setToolTip("Generate Comic Book CBZ File")
         self.cbz_checkbox.setMinimumWidth(70)
 
         self.pdf_checkbox = QCheckBox("PDF")
         self.pdf_checkbox.setObjectName("pdf_checkbox")
+        self.pdf_checkbox.setToolTip("Generate PDF file")
         self.pdf_checkbox.setMinimumWidth(80)
 
         self.dry_run_checkbox = QCheckBox("Dry Run")
         self.dry_run_checkbox.setObjectName("dry_run_checkbox")
+        self.dry_run_checkbox.setToolTip("Dry run, skips file download for reference")
         self.dry_run_checkbox.setMinimumWidth(130)
 
         self.show_checkbox = QCheckBox("Show")
         self.show_checkbox.setObjectName("show_checkbox")
+        self.show_checkbox.setToolTip("Only shows the doujinshi information")
         self.show_checkbox.setMaximumWidth(90)
 
         self.no_html_checkbox = QCheckBox("No HTML")
         self.no_html_checkbox.setObjectName("no_html_checkbox")
+        self.no_html_checkbox.setToolTip("Don't generate HTML after downloading")
         self.no_html_checkbox.setMaximumWidth(105)
 
         self.gen_main_checkbox = QCheckBox("Gen. Main")
         self.gen_main_checkbox.setObjectName("gen_main_checkbox")
+        self.gen_main_checkbox.setToolTip("Generate a main viewer contain all the doujin in the folder") #TODO Might needs to reword this
         self.gen_main_checkbox.setMaximumWidth(110)
 
         self.meta_checkbox = QCheckBox("META")
         self.meta_checkbox.setObjectName("meta_checkbox")
+        self.meta_checkbox.setToolTip("Generate a metadata file in doujinshi format")
         self.meta_checkbox.setMaximumWidth(70)
 
         self.regen_cbz_checkbox = QCheckBox("Regen CBZ")
         self.regen_cbz_checkbox.setObjectName("regen_cbz_checkbox")
+        self.regen_cbz_checkbox.setToolTip("Regenerate the cbz file if exists")
         self.regen_cbz_checkbox.setMaximumWidth(135)
 
         self.search_checkbox = QCheckBox("Search")
         self.search_checkbox.setObjectName("search_checkbox")
+        self.search_checkbox.setToolTip("Search doujinshi by keyword")
         self.search_checkbox.stateChanged.connect(self.search_checkbox_state_changed)
 
         self.file_checkbox = QCheckBox("File: ")
         self.file_checkbox.setObjectName("file_checkbox")
+        self.file_checkbox.setToolTip("Read gallery IDs from file.")
         self.file_checkbox.stateChanged.connect(self.file_checkbox_state_changed)
         self.file_checkbox.setMaximumWidth(90)
 
@@ -153,10 +168,23 @@ class MainWindow(QMainWindow):
 
         self.delay_input = QLineEdit("1")
         self.delay_input.setObjectName("delay_input")
+        self.delay_input.setToolTip("Slow down between downloading every doujinshi")
         self.delay_input.setMaximumWidth(50)
 
         self.format_input = QLineEdit('')
         self.format_input.setObjectName("format_input")
+        tooltip_text = (
+            "%i: Doujinshi ID\n"
+            "%t: Doujinshi name\n"
+            "%s: Doujinshi subtitle (translated name)\n"
+            "%a: Doujinshi author(s)\n"
+            "%g: Doujinshi group(s)\n"
+            "%p: Doujinshi pretty name\n"
+            "%ag: Doujinshi author(s) or group(s)"
+        )
+        self.format_input.setToolTip(tooltip_text)
+        self.format_input.setPlaceholderText("[%ag] - %p (%i)")
+
         self.output_input = QLineEdit("")
         self.output_input.setObjectName("output_input")
 
@@ -164,6 +192,7 @@ class MainWindow(QMainWindow):
         self.sorting_combo_box = QComboBox()
         self.sorting_combo_box.addItems(['-','Recent','Popular','Popular Today','Popular Week'])
         self.sorting_combo_box.setObjectName("sorting_combo_box")
+        self.sorting_combo_box.setToolTip("Sorting order of doujinshi (recent / popular /popular-[today|week])")
         self.sorting_combo_box.setMinimumWidth(130)
 
         # Add widgets to layout
