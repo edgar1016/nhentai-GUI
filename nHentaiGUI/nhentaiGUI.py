@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
         self.pdf_checkbox = QCheckBox("PDF")
         self.pdf_checkbox.setObjectName("pdf_checkbox")
         self.pdf_checkbox.setToolTip("Generate PDF file")
-        self.pdf_checkbox.setMinimumWidth(80)
+        self.pdf_checkbox.setMinimumWidth(130)
 
         self.dry_run_checkbox = QCheckBox("Dry Run")
         self.dry_run_checkbox.setObjectName("dry_run_checkbox")
@@ -126,7 +126,7 @@ class MainWindow(QMainWindow):
         self.no_html_checkbox = QCheckBox("No HTML")
         self.no_html_checkbox.setObjectName("no_html_checkbox")
         self.no_html_checkbox.setToolTip("Don't generate HTML after downloading")
-        self.no_html_checkbox.setMaximumWidth(105)
+        self.no_html_checkbox.setMaximumWidth(104)
 
         self.gen_main_checkbox = QCheckBox("Gen. Main")
         self.gen_main_checkbox.setObjectName("gen_main_checkbox")
@@ -155,21 +155,30 @@ class MainWindow(QMainWindow):
         self.file_checkbox.setMaximumWidth(90)
 
         # QLabels
-        self.page_input_label = QLabel("Page Range \n(e.g. 1-6, 0 = all):")
+        self.page_input_label = QLabel("Page \nRange:")
         self.page_input_label.setMaximumWidth(100)
 
         self.delay_input_label = QLabel("Delay \n(seconds):")
         self.delay_input_label.setMaximumWidth(70)
 
+        self.thereads_input_label = QLabel("\nThreads:")
+        self.thereads_input_label.setMaximumWidth(70)
+
         # QLineEdits
         self.page_input = QLineEdit("")
         self.page_input.setObjectName("page_input")
+        self.page_input.setToolTip("(e.g. 1-6, 0 = all)")
         self.page_input.setMaximumWidth(50)
 
         self.delay_input = QLineEdit("1")
         self.delay_input.setObjectName("delay_input")
-        self.delay_input.setToolTip("Slow down between downloading every doujinshi")
-        self.delay_input.setMaximumWidth(50)
+        self.delay_input.setToolTip("Delay between downloading each doujinshi\n to avoid being timed out.")
+        self.delay_input.setMaximumWidth(54)
+
+        self.threads_input = QLineEdit("")
+        self.threads_input.setObjectName("threads_input")
+        self.threads_input.setToolTip("Thread count for downloading doujinshi")
+        self.threads_input.setMaximumWidth(70)
 
         self.format_input = QLineEdit('')
         self.format_input.setObjectName("format_input")
@@ -207,10 +216,10 @@ class MainWindow(QMainWindow):
         # Create QHBoxLayout for the second row
         second_row_layout = QHBoxLayout()
         second_row_layout.addWidget(self.rm_origin_dir_checkbox)
-        second_row_layout.addSpacing(5)
         second_row_layout.addWidget(self.page_input_label)
-        second_row_layout.addSpacing(5)
         second_row_layout.addWidget(self.delay_input_label)
+        second_row_layout.addWidget(self.thereads_input_label)
+        second_row_layout.addSpacing(16)
         second_row_layout.addWidget(self.pdf_checkbox)
         layout.addLayout(second_row_layout)
 
@@ -218,9 +227,8 @@ class MainWindow(QMainWindow):
         third_row_layout = QHBoxLayout()
         third_row_layout.addWidget(self.save_history_checkbox)
         third_row_layout.addWidget(self.page_input)
-        third_row_layout.addSpacing(60)
         third_row_layout.addWidget(self.delay_input)
-        third_row_layout.addSpacing(20)
+        third_row_layout.addWidget(self.threads_input)
         third_row_layout.addWidget(self.dry_run_checkbox)
         third_row_layout.addStretch(1)
         layout.addLayout(third_row_layout)
@@ -373,6 +381,8 @@ class MainWindow(QMainWindow):
             commands += " --download"
         if self.delay_input.text():
             commands += f" --delay {self.delay_input.text()}"
+        if self.threads_input.text():
+            commands += f" --threads={self.threads_input.text()}"
         if self.cbz_checkbox.isChecked():
             commands += " --cbz"
         if self.move_to_folder_checkbox.isChecked():
