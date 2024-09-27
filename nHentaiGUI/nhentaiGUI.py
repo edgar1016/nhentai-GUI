@@ -140,7 +140,7 @@ class MainWindow(QMainWindow):
 
         self.regen_cbz_checkbox = QCheckBox("Regen CBZ")
         self.regen_cbz_checkbox.setObjectName("regen_cbz_checkbox")
-        self.regen_cbz_checkbox.setToolTip("Regenerate the cbz file if exists")
+        self.regen_cbz_checkbox.setToolTip("Regenerate the cbz or pdf file if exists")
         self.regen_cbz_checkbox.setMaximumWidth(135)
 
         self.search_checkbox = QCheckBox("Search")
@@ -367,7 +367,7 @@ class MainWindow(QMainWindow):
         if self.meta_checkbox.isChecked():
             commands += " --meta"     
         if self.regen_cbz_checkbox.isChecked():
-            commands += " --regenerate-cbz" 
+            commands += " --regenerate" 
         if self.file_checkbox.isChecked() and self.file_name is not None:
             commands += f" --file=\"{self.file_name}\"" 
         if self.search_checkbox.isChecked():
