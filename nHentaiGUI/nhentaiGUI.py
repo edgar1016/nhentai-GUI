@@ -50,8 +50,8 @@ class MainWindow(QMainWindow):
         self.file_name = None
 
         self.setWindowTitle("nHentai GUI")
-        icon = QIcon(":/resources/favicon.ico")
-        self.setWindowIcon(icon)
+        self.icon = QIcon(":/resources/favicon.ico")
+        self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 510, 300)
         self.center()
 
@@ -87,11 +87,17 @@ class MainWindow(QMainWindow):
         self.save_history_checkbox.setObjectName("save_history_checkbox")
         self.save_history_checkbox.setToolTip("Save downloaded doujinshis, whose will be skipped if you re-download them")
         self.save_history_checkbox.setMinimumWidth(200)
+        
+        self.artist_checkbox = QCheckBox("Artist")
+        self.artist_checkbox.setObjectName("artist_checkbox")
+        self.artist_checkbox.setToolTip("List doujinshi by artist name")
+        self.artist_checkbox.setMinimumWidth(90)
+        self.artist_checkbox.stateChanged.connect(self.artist_checkbox_state_changed)
 
-        self.favorites_checkbox = QCheckBox("Download Favorites")
+        self.favorites_checkbox = QCheckBox("Favorites")
         self.favorites_checkbox.setObjectName("favorites_checkbox")
         self.favorites_checkbox.setToolTip("List or download your favorites")
-        self.favorites_checkbox.setMinimumWidth(200)
+        self.favorites_checkbox.setMinimumWidth(104)
 
         self.download_checkbox = QCheckBox("Download")
         self.download_checkbox.setObjectName("download_checkbox")
@@ -140,7 +146,7 @@ class MainWindow(QMainWindow):
 
         self.regen_cbz_checkbox = QCheckBox("Regen CBZ")
         self.regen_cbz_checkbox.setObjectName("regen_cbz_checkbox")
-        self.regen_cbz_checkbox.setToolTip("Regenerate the cbz file if exists")
+        self.regen_cbz_checkbox.setToolTip("Regenerate the cbz or pdf file if exists")
         self.regen_cbz_checkbox.setMaximumWidth(135)
 
         self.search_checkbox = QCheckBox("Search")
@@ -235,6 +241,7 @@ class MainWindow(QMainWindow):
 
         # Create QHBoxLayout for the fourth row
         fourth_row_layout = QHBoxLayout()
+        fourth_row_layout.addWidget(self.artist_checkbox)
         fourth_row_layout.addWidget(self.favorites_checkbox)
         fourth_row_layout.addWidget(self.download_checkbox)
         fourth_row_layout.addWidget(self.cbz_checkbox)
@@ -289,7 +296,7 @@ class MainWindow(QMainWindow):
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
             self.pdf_checkbox, self.dry_run_checkbox, self.show_checkbox, self.no_html_checkbox,
             self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox,
-            self.file_checkbox
+            self.file_checkbox, self.artist_checkbox
         ]
         for checkbox in checkboxes:
             checkbox.setChecked(self.settings.value(checkbox.objectName(), False, type=bool))
@@ -300,7 +307,8 @@ class MainWindow(QMainWindow):
             (self.page_input, ""),
             (self.delay_input, "1"),
             (self.format_input, ""),
-            (self.output_input, "")
+            (self.output_input, ""),
+            (self.threads_input, "")
         ]
         for line_edit, default_value in line_edits:
             line_edit.setText(self.settings.value(line_edit.objectName(), default_value, type=str))
@@ -321,14 +329,19 @@ class MainWindow(QMainWindow):
             self.download_checkbox, self.cbz_checkbox, self.move_to_folder_checkbox,
             self.pdf_checkbox, self.dry_run_checkbox, self.show_checkbox, self.no_html_checkbox,
             self.gen_main_checkbox, self.meta_checkbox, self.regen_cbz_checkbox, self.search_checkbox,
-            self.file_checkbox
+            self.file_checkbox, self.artist_checkbox
         ]
         for checkbox in checkboxes:
             self.settings.setValue(checkbox.objectName(), checkbox.isChecked())
 
         # Save QLineEdit states
         line_edits = [
-            self.ids_input, self.page_input, self.delay_input, self.format_input, self.output_input
+            self.ids_input, 
+            self.page_input, 
+            self.delay_input, 
+            self.format_input, 
+            self.output_input, 
+            self.threads_input
         ]
         for line_edit in line_edits:
             self.settings.setValue(line_edit.objectName(), line_edit.text())
@@ -345,7 +358,7 @@ class MainWindow(QMainWindow):
         commands = "nhentai"
         selected_sorting_option = self.sorting_combo_box.currentText()
 
-        if self.ids_input.text() and not self.search_checkbox.isChecked():
+        if self.ids_input.text() and not self.search_checkbox.isChecked() and not self.artist_checkbox.isChecked():
             cleaned_output_text = self.ids_input.text().replace("#","")
             commands += f" --id {cleaned_output_text}"
         if self.rm_origin_dir_checkbox.isChecked():
@@ -367,11 +380,14 @@ class MainWindow(QMainWindow):
         if self.meta_checkbox.isChecked():
             commands += " --meta"     
         if self.regen_cbz_checkbox.isChecked():
-            commands += " --regenerate-cbz" 
+            commands += " --regenerate" 
         if self.file_checkbox.isChecked() and self.file_name is not None:
             commands += f" --file=\"{self.file_name}\"" 
         if self.search_checkbox.isChecked():
-            commands += f" --search \"{self.ids_input.text()}\"" 
+            commands += f" --search \"{self.ids_input.text()}\""    
+        if self.artist_checkbox.isChecked():
+            cleaned_output_text = self.ids_input.text().replace(" ", "-")
+            commands += f" --artist=\"{cleaned_output_text}\""
         if self.page_input.text():
             if self.page_input.text() == "0":
                 commands += f" --page-all"
@@ -460,6 +476,7 @@ class MainWindow(QMainWindow):
 
         input_dialog = QInputDialog()
         input_dialog.setWindowTitle("Update Preset")
+        input_dialog.setWindowIcon(self.icon)
         input_dialog.setLabelText("Select a Preset")
         input_dialog.setOkButtonText("Update")
 
@@ -526,7 +543,21 @@ class MainWindow(QMainWindow):
         self.ids_input.clear()
 
         if state == 2:
+            if self.artist_checkbox.isChecked():
+                self.artist_checkbox.setChecked(False)
+
             self.ids_input.setPlaceholderText("Search:")
+        else:
+            self.ids_input.setPlaceholderText("IDs (e.g., 302294 or #317039)")
+
+    def artist_checkbox_state_changed(self, state):
+        self.ids_input.clear()
+
+        if state == 2:
+            if self.search_checkbox.isChecked():
+                self.search_checkbox.setChecked(False)
+                
+            self.ids_input.setPlaceholderText("Artist:")
         else:
             self.ids_input.setPlaceholderText("IDs (e.g., 302294 or #317039)")
 

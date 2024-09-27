@@ -41,6 +41,11 @@ nHentai GUI is a graphical user interface for interacting with RicterZ's nhentai
 or you can just paste the path in the Output Folder input box as needed.
 - When you have a default folder set, any content entered into the Output Folder box will be appended to the end of your default folder path. This is particularly handy for organizing multiple doujins from the same series into specific subfolders within your default folder.
 
+**Set and Update Presets** 
+- You can create presets for options you frequently use by right clicking anywhere in the title bar and clicking `Add preset`. You'll be prompted to give the preset a name then click ok. All created presets will be listed under the presets tab in the menu bar.
+- You can update presets with the `current` options selected by right clicking anywhere in the title bar and clicking `Update Preset` select the preset you want to update and clicking `Update`.
+- Currently the only way to `delete` presets it by opening settings.ini and deleting them manually.
+
 ## Setting Your Cookies & User-Agent
 
 nHentai GUI provides a Cookie Handler that simplifies setting cookies and user agents. You can use the `copycookies` extension to export cookies from your browser and use the GUI to set the.
