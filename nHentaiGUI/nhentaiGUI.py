@@ -50,8 +50,8 @@ class MainWindow(QMainWindow):
         self.file_name = None
 
         self.setWindowTitle("nHentai GUI")
-        icon = QIcon(":/resources/favicon.ico")
-        self.setWindowIcon(icon)
+        self.icon = QIcon(":/resources/favicon.ico")
+        self.setWindowIcon(self.icon)
         self.setGeometry(100, 100, 510, 300)
         self.center()
 
@@ -476,6 +476,7 @@ class MainWindow(QMainWindow):
 
         input_dialog = QInputDialog()
         input_dialog.setWindowTitle("Update Preset")
+        input_dialog.setWindowIcon(self.icon)
         input_dialog.setLabelText("Select a Preset")
         input_dialog.setOkButtonText("Update")
 
