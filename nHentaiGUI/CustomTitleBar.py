@@ -19,7 +19,7 @@ class CustomTitleBar(QWidget):
 
         self.title_layout = QHBoxLayout()
 
-        version = '1.04'
+        version = '1.05'
 
         # Title label with style
         if isinstance(self.parent, QMainWindow):
