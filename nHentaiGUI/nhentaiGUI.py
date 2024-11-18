@@ -22,25 +22,17 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setMenuBar(None)
         self.cookieHandler = None
-
-
         
-        QCoreApplication.setOrganizationName("Edgar1016")
-        QCoreApplication.setApplicationName("nHentai_GUI")
-
-        # INI use for python
-        script_directory = os.path.dirname(os.path.abspath(__file__))
-        settings_file = os.path.join(script_directory, "settings.ini")
+        # Dynamically determine the location of settings.ini
+        if getattr(sys, 'frozen', False):  # Check if running as a frozen executable
+            base_path = os.path.dirname(sys.executable)
+        else:
+            base_path = os.path.dirname(os.path.abspath(__file__))
+        
+        settings_file = os.path.join(base_path, "settings.ini")
         self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
 
-
-        # INI use for built exe
-        # executable_path = sys.executable
-        # settings_file = os.path.join(os.path.dirname(executable_path), "settings.ini")
-        # self.settings = QSettings(settings_file, QSettings.Format.IniFormat)  # Create a QSettings instance
-
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
-
         self.init_ui()
 
 
@@ -608,6 +600,42 @@ class MainWindow(QMainWindow):
             base_path = os.path.abspath(".")
 
         return os.path.join(base_path, relative_path)
+    
+    def paste_and_append_text(self):
+        clipboard = QApplication.clipboard()
+        text = clipboard.text().strip()
+
+        # If checkbox is checked, paste the text without validation
+        if self.search_checkbox.isChecked():
+            current_text = self.ids_input.text().strip()
+            if current_text:
+                self.ids_input.setText(f"{current_text} {text}")
+            else:
+                self.ids_input.setText(text)
+            # print("Search checkbox is checked; pasted clipboard text as-is.")
+        else:
+            # Perform validation and duplicate check
+            match = re.fullmatch(r"#?\d{1,7}", text)
+            if match:
+                # Normalize the ID by removing the `#` for comparison
+                normalized_id = text.lstrip("#")
+
+                # Get the current content of the QLineEdit and split into IDs
+                current_text = self.ids_input.text().strip()
+                existing_ids = {id.lstrip("#") for id in current_text.split() if re.fullmatch(r"#?\d{1,7}", id)}
+
+                # Check for duplicates
+                if normalized_id not in existing_ids:
+                    # Append the new valid ID
+                    valid_text = text if text.startswith("#") else f"#{text}"  # Ensure the new ID includes `#`
+                    if current_text:
+                        self.ids_input.setText(f"{current_text} {valid_text}")
+                    else:
+                        self.ids_input.setText(valid_text)
+                else:
+                    print(f"Duplicate ID detected; not adding. ID: #{normalized_id}")
+            else:
+                print("Clipboard text does not match the required format. Valid format: (`#12345` or `12345` with 1-7 digits)")
         
 
 if __name__ == "__main__":

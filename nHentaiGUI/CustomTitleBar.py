@@ -19,7 +19,7 @@ class CustomTitleBar(QWidget):
 
         self.title_layout = QHBoxLayout()
 
-        version = '1.05'
+        version = '1.06'
 
         # Title label with style
         if isinstance(self.parent, QMainWindow):
@@ -129,6 +129,10 @@ class CustomTitleBar(QWidget):
             # Adds presets to the menu bar
             self.preset_menu = menubar.addMenu("Presets")
 
+            # Adds paste action to the menu bar
+            paste_action = menubar.addAction("Paste")
+            paste_action.triggered.connect(lambda: self.paste_id())
+
             # Get preset names from settings
             self.populate_preset_menu()
 
@@ -196,6 +200,9 @@ class CustomTitleBar(QWidget):
 
     def clean_download_history(self):
         self.main_window.clean_download_history()
+
+    def paste_id(self):
+        self.main_window.paste_and_append_text()
 
     def contextMenuEvent(self, event):
         context_menu = QMenu(self)
